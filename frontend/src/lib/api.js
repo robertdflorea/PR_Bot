@@ -128,4 +128,12 @@ export const api = {
 
   resetFirstPromptTemplate: () =>
     apiFetch('/api/settings/first-prompt-generator/reset', { method: 'POST' }),
+
+  getWorkflowGuide: () => apiFetch('/api/settings/workflow-guide'),
+
+  updateWorkflowGuide: (guide) =>
+    apiFetch('/api/settings/workflow-guide', { method: 'PUT', body: JSON.stringify({ guide }) }),
+
+  resetWorkflowGuide: () =>
+    apiFetch('/api/settings/workflow-guide/reset', { method: 'POST' }),
 };

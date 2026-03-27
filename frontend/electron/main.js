@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
 
 function createWindow() {
@@ -15,9 +15,12 @@ function createWindow() {
   if (app.isPackaged) {
     win.loadFile(path.join(__dirname, '../out/index.html'));
   } else {
-    win.loadURL('http://localhost:3000');
+    win.loadURL('http://localhost:4600');
   }
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  Menu.setApplicationMenu(null);
+  createWindow();
+});
 app.on('window-all-closed', () => app.quit());

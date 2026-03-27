@@ -9,8 +9,6 @@ const TABS = [
   { id: 'Issue Checker',   label: '1. Issue Checker' },
   { id: 'Setup Commands',  label: '2. Setup Commands' },
   { id: 'Prompts',         label: '3. Prompts' },
-  { id: 'Standards',       label: 'Standards' },
-  { id: 'History',         label: 'History' },
 ];
 
 /* ─── tiny localStorage helpers ─── */
@@ -66,6 +64,30 @@ function SavedLabel({ show }) {
   return show
     ? <span className="text-xs text-green-500 animate-pulse">● auto-saved</span>
     : null;
+}
+
+/* ─── step navigation ─── */
+function StepNav({ onPrev, onNext }) {
+  return (
+    <div className="flex justify-between pt-5 mt-4 border-t border-zinc-800">
+      {onPrev ? (
+        <button
+          onClick={onPrev}
+          className="px-4 py-2 text-sm rounded border border-zinc-600 text-zinc-400 hover:text-zinc-200 hover:border-zinc-500 transition-colors"
+        >
+          ← Prev
+        </button>
+      ) : <div />}
+      {onNext ? (
+        <button
+          onClick={onNext}
+          className="px-4 py-2 text-sm rounded bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-colors"
+        >
+          Next →
+        </button>
+      ) : <div />}
+    </div>
+  );
 }
 
 /* ════════════════════════════════════════════════════
@@ -361,7 +383,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header */}
+      {/* Sticky top bar */}
+      <div className="sticky top-0 z-30">
       <header className="bg-zinc-900 border-b border-zinc-700 px-6 py-3 flex items-center justify-between">
         <div>
           <h1 className="text-lg font-bold text-indigo-400">PR Bot</h1>
@@ -430,14 +453,13 @@ export default function Home() {
           </button>
         ))}
       </nav>
+      </div>
 
       {/* Content — all panels rendered but only active one is visible so state is never destroyed */}
       <main className="flex-1 p-6 max-w-4xl mx-auto w-full">
-        <div className={tab === 'Issue Checker'  ? '' : 'hidden'}><IssueChecker /></div>
-        <div className={tab === 'Setup Commands' ? '' : 'hidden'}><SetupCommands /></div>
-        <div className={tab === 'Prompts'        ? '' : 'hidden'}><Prompts /></div>
-        <div className={tab === 'Standards'      ? '' : 'hidden'}><Standards /></div>
-        <div className={tab === 'History'        ? '' : 'hidden'}><History /></div>
+        <div className={tab === 'Issue Checker'  ? '' : 'hidden'}><IssueChecker  onNext={() => switchTab('Setup Commands')} /></div>
+        <div className={tab === 'Setup Commands' ? '' : 'hidden'}><SetupCommands onPrev={() => switchTab('Issue Checker')}  onNext={() => switchTab('Prompts')} /></div>
+        <div className={tab === 'Prompts'        ? '' : 'hidden'}><Prompts       onPrev={() => switchTab('Setup Commands')} /></div>
         {user.role === 'admin' && (
           <div className={tab === 'Users' ? '' : 'hidden'}><UsersAdmin /></div>
         )}
@@ -449,36 +471,51 @@ export default function Home() {
 /* ════════════════════════════════════════════════════
    STEP 1 — ISSUE CHECKER
 ════════════════════════════════════════════════════ */
-function IssueChecker() {
-  const [url, setUrl]                   = useState('');
-  const [customContext, setCustomContext] = useState('');
-  const [selectedStd, setSelectedStd]   = useState('');
-  const [standards, setStandards]       = useState([]);
-  const [loading, setLoading]           = useState(false);
-  const [result, setResult]             = useState(null);
-  const [error, setError]               = useState('');
+const DEFAULT_STANDARD = `Repo requirements:
+• Language: Python, JavaScript, or TypeScript (Git repo)
+• Size: ≤ 200 MB at the selected commit
+• Understandable, executable (clear build/run instructions), dependency-complete (pip/conda/npm), has tests, English only
+
+Good issue:
+• Detailed description
+• PR changes many files with actual code (not just imports/comments/docs)
+• Issue is closed — solution can be verified
+• Complex enough to require 3+ meaningful steps from the model
+
+Bad issue:
+• No or minimal description
+• PR changes only a few files
+• Changes are trivial (docs-only, minor imports, comments)
+• Solved in 1–2 steps → automatic rejection
+
+Rules:
+• Too-simple issues = automatic rejection
+• Time spent searching does NOT count as work time — use the spreadsheet
+• Always verify language, size, and PR file count even with the spreadsheet
+• If model solves too quickly, restart on the same page with a different issue`;
+
+function IssueChecker({ onNext }) {
+  const [url, setUrl]           = useState('');
+  const [loading, setLoading]   = useState(false);
+  const [result, setResult]     = useState(null);
+  const [error, setError]       = useState('');
+  const [stdText, setStdText]   = useState(() => lsGet('prbot_std_text', DEFAULT_STANDARD));
+  const [editingStd, setEditingStd] = useState(false);
 
   useEffect(() => {
     setUrl(lsGet('prbot_issue_url', ''));
-    setCustomContext(lsGet('prbot_custom_context', ''));
-    setSelectedStd(lsGet('prbot_standard_id', ''));
     setResult(lsGet('prbot_issue_result', null));
-    api.getStandards().then((d) => setStandards(d.standards)).catch(() => {});
   }, []);
 
-  // persist on every change
-  useEffect(() => lsSet('prbot_issue_url',      url),          [url]);
-  useEffect(() => lsSet('prbot_custom_context', customContext), [customContext]);
-  useEffect(() => lsSet('prbot_standard_id',    selectedStd),  [selectedStd]);
+  useEffect(() => lsSet('prbot_issue_url',  url),     [url]);
+  useEffect(() => lsSet('prbot_std_text',   stdText), [stdText]);
   useEffect(() => { if (result) lsSet('prbot_issue_result', result); }, [result]);
 
   async function handleCheck() {
     if (!url.trim()) return;
-    setLoading(true);
-    setError('');
-    setResult(null);
+    setLoading(true); setError(''); setResult(null);
     try {
-      const data = await api.checkIssue(url.trim(), selectedStd || undefined, customContext);
+      const data = await api.checkIssue(url.trim(), undefined, undefined);
       setResult(data);
     } catch (e) {
       setError(e.message);
@@ -492,25 +529,16 @@ function IssueChecker() {
       <h2 className="text-xl font-semibold">Step 1 — Issue Checker</h2>
 
       <InfoBox>
-        <p>Enter a GitHub issue URL to check if it meets the quality standards for this project.</p>
-        <p>The bot will automatically verify:</p>
-        <ul className="list-disc list-inside ml-2 space-y-0.5 text-indigo-300 text-xs">
-          <li>Repository language is Python, JavaScript, or TypeScript</li>
-          <li>Repository size is ≤ 200 MB</li>
-          <li>Issue has a description (not just a title or a bare link)</li>
-          <li>Issue is closed (a merged PR solution exists for comparison)</li>
-          <li>The linked PR changed at least 4 files (non-trivial change)</li>
-          <li>The description is primarily in English</li>
-        </ul>
+        <p>Enter a GitHub issue URL. The bot automatically checks language, repo size, PR file count, description quality, and whether the issue is closed.</p>
         <p className="text-xs text-indigo-400 mt-1">
-          A <span className="text-green-400 font-medium">Good</span> result means you can proceed with this issue.
-          A <span className="text-yellow-400 font-medium">Warning</span> means it may work but has concerns.
-          A <span className="text-red-400 font-medium">Bad</span> result means you should pick a different issue.
+          <span className="text-green-400 font-medium">Good</span> — proceed.{' '}
+          <span className="text-yellow-400 font-medium">Warning</span> — may work, has concerns.{' '}
+          <span className="text-red-400 font-medium">Bad</span> — pick a different issue.
         </p>
       </InfoBox>
 
-      <div className="space-y-3">
-        <div>
+      <div className="flex gap-3 items-end">
+        <div className="flex-1">
           <label className="block text-sm text-zinc-400 mb-1">GitHub Issue URL</label>
           <input
             className="w-full px-3 py-2 rounded border text-sm"
@@ -520,43 +548,36 @@ function IssueChecker() {
             onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
           />
         </div>
+        <button
+          onClick={handleCheck}
+          disabled={loading || !url.trim()}
+          className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 rounded text-sm font-medium transition-colors"
+        >
+          {loading ? 'Checking…' : 'Check Issue'}
+        </button>
+      </div>
 
-        <div className="flex gap-3 items-end">
-          <div className="flex-1">
-            <label className="block text-sm text-zinc-400 mb-1">Standard</label>
-            <select
-              className="w-full px-3 py-2 rounded border text-sm bg-zinc-800 border-zinc-600"
-              value={selectedStd}
-              onChange={(e) => setSelectedStd(e.target.value)}
-            >
-              <option value="">Default (built-in)</option>
-              {standards.map((s) => (
-                <option key={s._id} value={s._id}>{s.name}</option>
-              ))}
-            </select>
-          </div>
+      {/* Editable evaluation standard */}
+      <div className="rounded-lg border border-zinc-700 bg-zinc-800/50">
+        <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-700">
+          <span className="text-sm font-medium text-zinc-300">Evaluation Standard</span>
           <button
-            onClick={handleCheck}
-            disabled={loading || !url.trim()}
-            className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 rounded text-sm font-medium transition-colors"
+            onClick={() => setEditingStd((v) => !v)}
+            className="text-xs px-2 py-0.5 rounded border border-zinc-600 text-zinc-400 hover:text-indigo-400 hover:border-indigo-700 transition-colors"
           >
-            {loading ? 'Checking…' : 'Check Issue'}
+            {editingStd ? '✓ Done' : '✎ Edit'}
           </button>
         </div>
-
-        <div>
-          <label className="block text-sm text-zinc-400 mb-1">
-            Custom context{' '}
-            <span className="text-zinc-500">(optional — appended to the generated first prompt)</span>
-          </label>
+        {editingStd ? (
           <textarea
-            className="w-full px-3 py-2 rounded border text-sm resize-none"
-            rows={2}
-            placeholder="e.g. Focus on the async handling logic"
-            value={customContext}
-            onChange={(e) => setCustomContext(e.target.value)}
+            className="w-full px-4 py-3 bg-transparent text-xs text-zinc-300 font-mono resize-none focus:outline-none"
+            rows={18}
+            value={stdText}
+            onChange={(e) => setStdText(e.target.value)}
           />
-        </div>
+        ) : (
+          <pre className="px-4 py-3 text-xs text-zinc-400 leading-relaxed whitespace-pre-wrap font-sans">{stdText}</pre>
+        )}
       </div>
 
       {error && (
@@ -565,7 +586,6 @@ function IssueChecker() {
 
       {result && (
         <div className="space-y-4">
-          {/* Verdict card */}
           <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
             <div className="flex items-center justify-between mb-2">
               <span className="font-semibold text-zinc-200">{result.issueData.title}</span>
@@ -576,19 +596,49 @@ function IssueChecker() {
             </div>
             <div className="text-xs text-zinc-400 mb-3">
               {result.issueData.owner}/{result.issueData.repo} #{result.issueData.issueNumber} ·{' '}
-              {result.issueData.language} · {result.issueData.state} ·{' '}
-              Score: {result.score}%
-              {result.issueData.prFilesChanged != null && ` · PR files changed: ${result.issueData.prFilesChanged}`}
+              {result.issueData.language} · {result.issueData.state} · Score: {result.score}%
             </div>
+
+            {/* Linked PR — most critical check */}
+            {result.issueData.prNumber ? (
+              <div className={`rounded-lg p-3 mb-3 flex items-center justify-between ${
+                result.issueData.linkedPrMerged
+                  ? 'bg-green-950/50 border border-green-700'
+                  : 'bg-yellow-950/50 border border-yellow-700'
+              }`}>
+                <div className="space-y-0.5">
+                  <span className={`text-xs font-semibold ${result.issueData.linkedPrMerged ? 'text-green-300' : 'text-yellow-300'}`}>
+                    {result.issueData.linkedPrMerged ? '✓ Merged PR found' : '⚠ Linked PR (not confirmed merged)'}
+                    {' '}— #{result.issueData.prNumber}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    {result.issueData.prFilesChanged != null && (
+                      <span className="text-xs text-zinc-400">{result.issueData.prFilesChanged} files changed</span>
+                    )}
+                    {result.issueData.prUrl && (
+                      <span className="text-xs font-mono text-zinc-500 truncate max-w-xs">{result.issueData.prUrl}</span>
+                    )}
+                  </div>
+                </div>
+                {result.issueData.prUrl && <CopyButton text={result.issueData.prUrl} />}
+              </div>
+            ) : (
+              <div className="rounded-lg p-3 mb-3 bg-red-950/50 border border-red-700">
+                <span className="text-xs font-semibold text-red-300">
+                  ✕ No linked merged PR found — verify manually on GitHub before proceeding
+                </span>
+              </div>
+            )}
+
             <CriteriaList results={result.results} />
           </div>
-
-          {/* First prompt is generated in Step 2 via the AI meta-prompt card */}
           <p className="text-xs text-indigo-400 border border-indigo-800 bg-indigo-950/30 rounded px-3 py-2">
-            Go to <strong>Step 2 — Setup Commands</strong> to get the AI prompt that generates your first claude-hfi message.
+            Go to <strong>Step 2 — Setup Commands</strong> to continue setup.
           </p>
         </div>
       )}
+
+      <StepNav onNext={onNext} />
     </div>
   );
 }
@@ -653,6 +703,11 @@ function EditableAiCard({ step, title, subtitle, instruction, lsKey, getFn, upda
       label: 'text-emerald-300', step: 'text-emerald-400', note: 'text-emerald-500',
       pre: 'text-emerald-200', taBorder: 'border-emerald-600',
     },
+    zinc: {
+      border: 'border-zinc-600', bg: 'bg-zinc-800/40',
+      label: 'text-zinc-300', step: 'text-zinc-400', note: 'text-zinc-500',
+      pre: 'text-zinc-300', taBorder: 'border-zinc-600',
+    },
   };
   const c = colors[accentColor] || colors.violet;
 
@@ -667,7 +722,7 @@ function EditableAiCard({ step, title, subtitle, instruction, lsKey, getFn, upda
     setLoading(true);
     getFn()
       .then((d) => {
-        const val = d.prompt || d.template || '';
+        const val = d.prompt || d.template || d.guide || '';
         setContent(val);
         lsSet(lsKey, val);
       })
@@ -681,7 +736,7 @@ function EditableAiCard({ step, title, subtitle, instruction, lsKey, getFn, upda
     setSaving(true); setSaveMsg('');
     try {
       const d = await updateFn(draft);
-      const val = d.prompt || d.template || '';
+      const val = d.prompt || d.template || d.guide || '';
       setContent(val); lsSet(lsKey, val);
       setEditing(false); setSaveMsg('Saved.');
     } catch (e) { setSaveMsg(`Error: ${e.message}`); }
@@ -693,7 +748,7 @@ function EditableAiCard({ step, title, subtitle, instruction, lsKey, getFn, upda
     setSaving(true);
     try {
       const d = await resetFn();
-      const val = d.prompt || d.template || '';
+      const val = d.prompt || d.template || d.guide || '';
       setContent(val); lsSet(lsKey, val); setDraft(val);
       setSaveMsg('Reset to default.');
     } catch (e) { setSaveMsg(`Error: ${e.message}`); }
@@ -777,43 +832,6 @@ function DockerfilePromptCard({ step }) {
   );
 }
 
-/* First prompt generator card — emerald */
-function FirstPromptGeneratorCard() {
-  function fillTemplate(template) {
-    if (!template) return template;
-    // Read fresh from localStorage each time so it reflects the latest Issue Checker result
-    const result = lsGet('prbot_issue_result', null);
-    const d = result?.issueData || {};
-    return template
-      .replace(/\{\{ISSUE_TITLE\}\}/g, d.title || '(not set — run Issue Checker first)')
-      .replace(/\{\{REPO\}\}/g, d.owner && d.repo ? `${d.owner}/${d.repo}` : '(not set)')
-      .replace(/\{\{LANGUAGE\}\}/g, d.language || '(not set)')
-      .replace(/\{\{ISSUE_BODY\}\}/g, d.body || '(no body)');
-  }
-
-  return (
-    <EditableAiCard
-      step={null}
-      title="Generate First Prompt for claude-hfi"
-      subtitle="(paste into Claude AI to get your first prompt)"
-      instruction={
-        <>
-          Copy this filled-in meta-prompt and paste it into <strong>Claude.ai</strong> (or any Claude interface).
-          Claude will generate the first prompt you should send to the model in your claude-hfi session.
-          If placeholders show &quot;(not set)&quot;, go to Step 1 and run the Issue Checker first.
-        </>
-      }
-      lsKey="prbot_first_prompt_template"
-      getFn={api.getFirstPromptTemplate}
-      updateFn={api.updateFirstPromptTemplate}
-      resetFn={api.resetFirstPromptTemplate}
-      resetMsg="Reset to the default first-prompt template?"
-      accentColor="emerald"
-      renderContent={fillTemplate}
-    />
-  );
-}
-
 /* git log step card */
 function GitLogCard({ step }) {
   const cmd = 'git log --oneline -5';
@@ -881,12 +899,13 @@ function TmuxAttachCard() {
 }
 
 /* cc_agentic_coding sky card */
-function CcAgenticCard() {
+function CcAgenticCard({ step }) {
   const text = 'cc_agentic_coding';
   return (
     <div className="rounded-lg border border-sky-700 bg-sky-950/25 p-3 space-y-2">
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium text-sky-300">
+          {step && <span className="text-indigo-400 mr-1">{step}.</span>}
           Enable agentic coding mode in claude-hfi
         </span>
         <CopyButton text={text} />
@@ -902,30 +921,31 @@ function CcAgenticCard() {
   );
 }
 
-function SetupCommands() {
-  const [repoUrl,     setRepoUrl]     = useState('');
-  const [baseSha,     setBaseSha]     = useState('');
-  const [repoFolder,  setRepoFolder]  = useState('');
-  const [commands,    setCommands]    = useState([]);
-  const [headCommit,  setHeadCommit]  = useState('');
-  const [issueResult, setIssueResult] = useState(null);
-  const [issueUrl,    setIssueUrl]    = useState('');
+
+function SetupCommands({ onPrev, onNext }) {
+  const [repoUrl,      setRepoUrl]      = useState('');
+  const [baseSha,      setBaseSha]      = useState('');
+  const [commands,     setCommands]     = useState([]);
+  const [headCommit,   setHeadCommit]   = useState('');
+  const [issueResult,  setIssueResult]  = useState(null);
+  const [summaryText,  setSummaryText]  = useState('');
 
   useEffect(() => {
     setRepoUrl(lsGet('prbot_setup_repo_url', ''));
     setBaseSha(lsGet('prbot_setup_base_sha', ''));
-    setRepoFolder(lsGet('prbot_setup_folder', ''));
     setCommands(lsGet('prbot_setup_commands', []));
     setHeadCommit(lsGet('prbot_head_commit', ''));
     setIssueResult(lsGet('prbot_issue_result', null));
-    setIssueUrl(lsGet('prbot_issue_url', ''));
+    setSummaryText(lsGet('prbot_summary_text', ''));
   }, []);
 
-  useEffect(() => lsSet('prbot_setup_repo_url',  repoUrl),    [repoUrl]);
-  useEffect(() => lsSet('prbot_setup_base_sha',  baseSha),    [baseSha]);
-  useEffect(() => lsSet('prbot_setup_folder',    repoFolder), [repoFolder]);
-  useEffect(() => lsSet('prbot_setup_commands',  commands),   [commands]);
-  useEffect(() => lsSet('prbot_head_commit',     headCommit), [headCommit]);
+  useEffect(() => lsSet('prbot_setup_repo_url', repoUrl),    [repoUrl]);
+  useEffect(() => lsSet('prbot_setup_base_sha', baseSha),    [baseSha]);
+  useEffect(() => lsSet('prbot_setup_commands', commands),   [commands]);
+  useEffect(() => lsSet('prbot_head_commit',    headCommit), [headCommit]);
+  useEffect(() => lsSet('prbot_summary_text',   summaryText),[summaryText]);
+
+  const repoFolder = repoUrl.split('/').filter(Boolean).pop() || '';
 
   const effectiveRepoUrl =
     issueResult?.issueData?.owner && issueResult?.issueData?.repo
@@ -935,6 +955,10 @@ function SetupCommands() {
   async function generate() {
     const d = await api.getSetupCommands(repoUrl, baseSha, repoFolder);
     setCommands(d.commands);
+    const issueUrl = lsGet('prbot_issue_url', '');
+    setSummaryText(
+      `1. ${repoFolder || '<local-folder>'}\n2. issue: ${issueUrl || '<issue-url>'}\n3. Four interactions`
+    );
   }
 
   return (
@@ -956,13 +980,11 @@ function SetupCommands() {
           </li>
           <li>Run <code className="bg-indigo-950/40 px-1 rounded">git log</code> and save the HEAD commit SHA in the field below.</li>
           <li>Start a new tmux session.</li>
-          <li>Launch claude-hfi in VS Code mode, then type <code className="bg-sky-950/40 px-1 rounded">cc_agentic_coding</code>.</li>
-          <li className="text-emerald-300">
-            <strong>Copy the first-prompt meta-prompt</strong> into Claude.ai to generate your opening message.
-          </li>
+          <li>Launch claude-hfi in VS Code mode.</li>
+          <li>Type <code className="bg-sky-950/40 px-1 rounded">cc_agentic_coding</code> inside the claude-hfi session.</li>
         </ol>
         <p className="text-xs text-indigo-400 mt-1">
-          Blue = shell commands · Violet = Dockerfile AI prompt · Teal = SHA to save · Emerald = first-prompt generator · Sky = agentic mode
+          Blue = shell commands · Violet = Dockerfile AI prompt · Teal = SHA to save · Sky = agentic mode
         </p>
       </InfoBox>
 
@@ -975,10 +997,12 @@ function SetupCommands() {
           <label className="block text-xs text-zinc-400 mb-1">Base SHA (from the spreadsheet column)</label>
           <input className="w-full px-3 py-2 rounded border text-sm font-mono" placeholder="abc1234def..." value={baseSha} onChange={(e) => setBaseSha(e.target.value)} />
         </div>
-        <div>
-          <label className="block text-xs text-zinc-400 mb-1">Local folder name</label>
-          <input className="w-full px-3 py-2 rounded border text-sm" placeholder="my-repo" value={repoFolder} onChange={(e) => setRepoFolder(e.target.value)} />
-        </div>
+        {repoFolder && (
+          <div className="px-3 py-2 rounded border border-zinc-700 bg-zinc-800/50 text-sm text-zinc-400">
+            <span className="text-zinc-500 text-xs">Local folder → </span>
+            <span className="font-mono text-teal-300">{repoFolder}</span>
+          </div>
+        )}
       </div>
 
       <button onClick={generate} className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 rounded text-sm font-medium">
@@ -1000,14 +1024,25 @@ function SetupCommands() {
           {/* Step 5: Dockerfile AI prompt */}
           <DockerfilePromptCard step={5} />
 
+          {/* Optional section: commit, get SHA, compress (steps 9–11 moved here for reference) */}
+          {commands.slice(6).length > 0 && (
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-zinc-500 uppercase tracking-wide pt-1">
+                Optional — reference steps (run when appropriate)
+              </p>
+              {commands.slice(6).map((c, i) => (
+                <div key={`opt-${i}`} className="bg-zinc-800/40 rounded-lg border border-dashed border-zinc-600">
+                  <ShellCommandCard step={null} label={`(Optional) ${c.label}`} cmd={c.cmd} note={c.note} />
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* Step 6: git log */}
           <GitLogCard step={6} />
 
           {/* HEAD commit SHA input */}
           <HeadCommitCard value={headCommit} onChange={setHeadCommit} />
-
-          {/* First prompt generator (emerald) — reads issue data from localStorage */}
-          <FirstPromptGeneratorCard />
 
           {/* Step 7: tmux new -s task */}
           {commands[4] && (
@@ -1022,23 +1057,181 @@ function SetupCommands() {
             <ShellCommandCard step={8} label={commands[5].label} cmd={commands[5].cmd} note={commands[5].note} />
           )}
 
-          {/* cc_agentic_coding */}
-          <CcAgenticCard />
+          {/* Step 9: cc_agentic_coding */}
+          <CcAgenticCard step={9} />
 
           {/* Quick reference */}
           <div className="space-y-2 pt-1">
             <p className="text-xs font-medium text-zinc-400 uppercase tracking-wide">Quick Reference — copy as needed</p>
             <CopyInfoCard label="GitHub Repository URL" value={effectiveRepoUrl} />
-            <CopyInfoCard label="GitHub Issue URL" value={issueUrl} />
+            <CopyInfoCard label="GitHub Issue URL" value={lsGet('prbot_issue_url', '')} />
             <CopyInfoCard label="Initial Setup Commit SHA" value={headCommit} note="Required by Revelo — paste this into the platform" />
           </div>
-
-          {/* Remaining backend commands (steps 9+) */}
-          {commands.slice(6).map((c, i) => (
-            <ShellCommandCard key={`tail-${i}`} step={9 + i} label={c.label} cmd={c.cmd} note={c.note} />
-          ))}
         </div>
       )}
+
+      {/* HFI Workflow Guide — stored in DB, editable */}
+      <EditableAiCard
+        step={null}
+        title="HFI Workflow Guide"
+        subtitle="(stored in database — editable reference)"
+        instruction={null}
+        lsKey="prbot_guide_text"
+        getFn={api.getWorkflowGuide}
+        updateFn={api.updateWorkflowGuide}
+        resetFn={api.resetWorkflowGuide}
+        resetMsg="Reset workflow guide to default?"
+        accentColor="zinc"
+      />
+
+      {/* Session summary card — appears after Generate Commands is clicked */}
+      {summaryText && (
+        <div className="rounded-lg border border-amber-700 bg-amber-950/20 p-3 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-amber-300 uppercase tracking-wide">Session Summary</span>
+            <CopyButton text={summaryText} />
+          </div>
+          <textarea
+            className="w-full px-3 py-2 rounded border border-amber-800 bg-zinc-900 text-sm font-mono text-amber-200 resize-y"
+            rows={3}
+            value={summaryText}
+            onChange={(e) => setSummaryText(e.target.value)}
+          />
+        </div>
+      )}
+
+      <StepNav onPrev={onPrev} onNext={onNext} />
+    </div>
+  );
+}
+
+
+/* ════════════════════════════════════════════════════
+   HELPERS — Prompts tab
+════════════════════════════════════════════════════ */
+
+const BAND        = ['A4', 'A3', 'A2', 'A1', 'B1', 'B2', 'B3', 'B4'];
+const BAND_SYMBOL = { A4: 'A', A3: 'O', A2: 'o', A1: '.', B1: '.', B2: 'o', B3: 'O', B4: 'B' };
+
+function BandDisplay({ value }) {
+  if (!value) return <span className="text-xs text-zinc-600 italic">—</span>;
+  return (
+    <div className="flex items-center gap-1">
+      {BAND.map((v) => {
+        const isSelected = v === value;
+        const isA = v.startsWith('A');
+        return (
+          <div key={v} className="flex flex-col items-center">
+            <div className={`w-7 h-7 flex items-center justify-center rounded text-xs font-bold font-mono ${
+              isSelected
+                ? isA ? 'bg-indigo-600 text-white ring-2 ring-indigo-400' : 'bg-amber-600 text-white ring-2 ring-amber-400'
+                : 'bg-zinc-800 text-zinc-600 border border-zinc-700'
+            }`}>
+              {BAND_SYMBOL[v]}
+            </div>
+            <span className={`text-[9px] mt-0.5 ${isSelected ? (isA ? 'text-indigo-400' : 'text-amber-400') : 'text-zinc-700'}`}>{v}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function CopyableBlock({ label, text }) {
+  if (!text) return null;
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-zinc-400">{label}</span>
+        <CopyButton text={text} />
+      </div>
+      <pre className="text-sm text-zinc-300 whitespace-pre-wrap bg-zinc-900 rounded px-3 py-2 leading-relaxed font-sans">{text}</pre>
+    </div>
+  );
+}
+
+function parseInteractionChunk(chunk) {
+  let prompt = '';
+  const promptM = chunk.match(/Prompt:\s*\n([\s\S]*?)(?=\nAnswers:|$)/i);
+  if (promptM) prompt = promptM[1].trim();
+
+  const ansM = chunk.match(/Answers:\s*\n([\s\S]*)/i);
+  if (!ansM) return { prompt, q1: '', q2: '', q3: '', q4: '', ratings: {}, q12: '', q13: '' };
+  const ans = '\n' + ansM[1];
+
+  function extractText(n, nextN) {
+    const np = nextN != null ? `(?=\\nQ${nextN}[^\\d])` : '';
+    const re = new RegExp(`\\nQ${n}[^:]*:\\s*\\n([\\s\\S]*?)${np}`, 'i');
+    const m = ans.match(re);
+    return m ? m[1].trim() : '';
+  }
+
+  function extractInline(n) {
+    const m = ans.match(new RegExp(`\\nQ${n}:\\s*([AB][1-4])`, 'i'));
+    return m ? m[1].toUpperCase() : '';
+  }
+
+  const ratings = {};
+  for (let q = 5; q <= 11; q++) {
+    const v = extractInline(q);
+    if (v) ratings[q] = v;
+  }
+
+  return {
+    prompt,
+    q1: extractText(1, 2),
+    q2: extractText(2, 3),
+    q3: extractText(3, 4),
+    q4: extractText(4, 5),
+    ratings,
+    q12: extractText(12, 13),
+    q13: extractInline(13),
+  };
+}
+
+function parseInteractions(rawText) {
+  const re = /(?:^|\n)Interaction\s+(\d+)\s*\n/g;
+  const matches = [...rawText.matchAll(re)];
+  if (!matches.length) return [];
+  return matches.map((match, i) => {
+    const start = match.index + match[0].length;
+    const end   = i + 1 < matches.length ? matches[i + 1].index : rawText.length;
+    return { num: parseInt(match[1], 10), ...parseInteractionChunk(rawText.slice(start, end)) };
+  });
+}
+
+function InteractionCard({ interaction }) {
+  const { num, prompt, q1, q2, q3, q4, ratings, q12, q13 } = interaction;
+  return (
+    <div className="bg-zinc-800 rounded-lg border border-zinc-700 overflow-hidden">
+      <div className="bg-zinc-700/50 px-4 py-2.5 border-b border-zinc-700">
+        <h3 className="font-semibold text-zinc-100">Interaction {num}</h3>
+      </div>
+      <div className="p-4 space-y-4">
+        <CopyableBlock label="Prompt" text={prompt} />
+        <div className="space-y-3">
+          <CopyableBlock label="Q1 — Model A did well" text={q1} />
+          <CopyableBlock label="Q2 — Model A could improve" text={q2} />
+          <CopyableBlock label="Q3 — Model B did well" text={q3} />
+          <CopyableBlock label="Q4 — Model B could improve" text={q4} />
+        </div>
+        <div className="space-y-2.5">
+          <p className="text-xs font-medium text-zinc-500 uppercase tracking-wide">Ratings (A ← → B)</p>
+          {[5, 6, 7, 8, 9, 10, 11].map((q) => (
+            <div key={q} className="flex items-center gap-3">
+              <span className="text-xs font-mono text-zinc-500 w-5">Q{q}</span>
+              <BandDisplay value={ratings[q] || ''} />
+              {ratings[q] && <CopyButton text={ratings[q]} />}
+            </div>
+          ))}
+        </div>
+        <CopyableBlock label="Q12 — Justification" text={q12} />
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-mono text-zinc-500 w-6">Q13</span>
+          <BandDisplay value={q13} />
+          {q13 && <CopyButton text={q13} />}
+        </div>
+      </div>
     </div>
   );
 }
@@ -1046,29 +1239,20 @@ function SetupCommands() {
 /* ════════════════════════════════════════════════════
    STEP 3 — PROMPTS
 ════════════════════════════════════════════════════ */
-function Prompts() {
-  const [followUpNotes,  setFollowUpNotes]  = useState('');
-  const [followUpPrompt, setFollowUpPrompt] = useState('');
-  const [finalPrompt,    setFinalPrompt]    = useState('');
+function Prompts({ onPrev }) {
+  const [rawText,      setRawText]      = useState('');
+  const [interactions, setInteractions] = useState([]);
 
   useEffect(() => {
-    setFollowUpNotes(lsGet('prbot_followup_notes', ''));
-    setFollowUpPrompt(lsGet('prbot_followup_prompt', ''));
-    setFinalPrompt(lsGet('prbot_final_prompt', ''));
+    setRawText(lsGet('prbot_prompts_raw', ''));
+    setInteractions(lsGet('prbot_prompts_parsed', []));
   }, []);
 
-  useEffect(() => lsSet('prbot_followup_notes',  followUpNotes),  [followUpNotes]);
-  useEffect(() => lsSet('prbot_followup_prompt', followUpPrompt), [followUpPrompt]);
-  useEffect(() => lsSet('prbot_final_prompt',    finalPrompt),    [finalPrompt]);
+  useEffect(() => lsSet('prbot_prompts_raw',    rawText),      [rawText]);
+  useEffect(() => lsSet('prbot_prompts_parsed', interactions), [interactions]);
 
-  async function genFollowUp() {
-    const d = await api.generateFollowUp(followUpNotes);
-    setFollowUpPrompt(d.prompt);
-  }
-
-  async function genFinal() {
-    const d = await api.getFinalPrompt();
-    setFinalPrompt(d.prompt);
+  function parse() {
+    setInteractions(parseInteractions(rawText));
   }
 
   return (
@@ -1077,286 +1261,45 @@ function Prompts() {
 
       <InfoBox>
         <p>
-          Use this tab <strong>during your claude-hfi session</strong>, after you've sent the first
-          prompt (generated in Step 2) and reviewed the model's response.
+          Paste the full interaction data from your HFI session and click{' '}
+          <strong>Parse Interactions</strong>. Each interaction becomes a copy-ready section.
         </p>
         <ul className="list-disc list-inside ml-2 space-y-1 text-xs text-indigo-300">
-          <li>
-            <strong>Follow-up prompt</strong> — Use this after each model response that still needs work.
-            Write your review notes (what was wrong, what's missing) and generate a PR-style comment.
-            Minimum 3 meaningful interactions are required.
-          </li>
-          <li>
-            <strong>Final prompt</strong> — Use this only when the solution is production-ready.
-            It asks the model to commit all remaining changes before you exit.
-          </li>
+          <li>Q1–Q4: text answers — each block has its own copy button.</li>
+          <li>Q5–Q11 and Q13: the selected rating is highlighted on the A ← → B band.</li>
+          <li>Q12: justification text — copy-ready block.</li>
         </ul>
-        <p className="text-xs text-indigo-400 mt-1">
-          Remember: pause the Revelo timer every time you send a prompt and the model is running.
-          Resume it once the model finishes and you start your review.
-        </p>
       </InfoBox>
 
-      {/* Follow-up */}
-      <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700 space-y-3">
-        <div>
-          <h3 className="font-medium text-zinc-200">Follow-up / PR Review Prompt</h3>
-          <p className="text-xs text-zinc-400 mt-0.5">
-            Describe what the model got wrong or what's still missing. Leave blank for a generic
-            PR review template.
-          </p>
-        </div>
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-zinc-300">Interaction data</label>
         <textarea
-          className="w-full px-3 py-2 rounded border text-sm resize-none"
-          rows={4}
-          placeholder="e.g. The error handling is missing for the case where the response is empty. The variable name 'x' should be more descriptive. Tests don't cover the edge case when the input is null."
-          value={followUpNotes}
-          onChange={(e) => setFollowUpNotes(e.target.value)}
+          className="w-full px-3 py-2 rounded border border-zinc-700 bg-zinc-900 text-xs font-mono text-zinc-300 resize-y leading-relaxed"
+          rows={14}
+          value={rawText}
+          onChange={(e) => setRawText(e.target.value)}
+          placeholder={"Interaction 1\nPrompt:\n\n...\n\nAnswers:\n\nQ1 (Model A did well):\n...\nQ5: A3\n...\nQ13: A3"}
         />
-        <button
-          onClick={genFollowUp}
-          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded text-sm font-medium"
-        >
-          Generate Follow-up Prompt
-        </button>
-
-        {followUpPrompt && (
-          <div className="space-y-2 mt-1">
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-zinc-300">Generated prompt</span>
-              <div className="flex items-center gap-2">
-                <SavedLabel show />
-                <CopyButton text={followUpPrompt} />
-              </div>
-            </div>
-            <PromptInstruction>
-              Copy this and paste it as your next message in the claude-hfi interface.
-              Treat it as a PR review comment — it should focus on issues with the
-              current code, not request new features or expand the scope.
-              Do <strong>not</strong> add system-level instructions.
-            </PromptInstruction>
-            <pre className="text-sm text-zinc-300 whitespace-pre-wrap font-sans bg-zinc-900 rounded p-3 leading-relaxed">
-              {followUpPrompt}
-            </pre>
-          </div>
-        )}
       </div>
 
-      {/* Final prompt */}
-      <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700 space-y-3">
-        <div>
-          <h3 className="font-medium text-zinc-200">Final Prompt — ask model to commit</h3>
-          <p className="text-xs text-zinc-400 mt-0.5">
-            Use this only when you're satisfied the solution is production-ready.
-          </p>
-        </div>
-        <button
-          onClick={genFinal}
-          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded text-sm font-medium"
-        >
-          Get Final Prompt
-        </button>
+      <button
+        onClick={parse}
+        disabled={!rawText.trim()}
+        className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 rounded text-sm font-medium"
+      >
+        Parse Interactions
+      </button>
 
-        {finalPrompt && (
-          <div className="space-y-2 mt-1">
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-zinc-300">Generated prompt</span>
-              <div className="flex items-center gap-2">
-                <SavedLabel show />
-                <CopyButton text={finalPrompt} />
-              </div>
-            </div>
-            <PromptInstruction>
-              Send this as your <strong>last message</strong> to the model before exiting
-              the HFI tool. After the model commits, press <kbd className="bg-zinc-700 px-1 rounded">Ctrl+C</kbd> in
-              the tmux terminal to end the session. Then compress the repo with{' '}
-              <code className="bg-zinc-700 px-1 rounded text-xs">tar cf final_result.tar &lt;repo-folder&gt;</code>{' '}
-              and upload it to the Revelo platform.
-            </PromptInstruction>
-            <pre className="text-sm text-zinc-300 whitespace-pre-wrap font-sans bg-zinc-900 rounded p-3 leading-relaxed">
-              {finalPrompt}
-            </pre>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ════════════════════════════════════════════════════
-   STANDARDS
-════════════════════════════════════════════════════ */
-function Standards() {
-  const [data, setData] = useState({ standards: [], defaultCriteria: [] });
-  const [newName, setNewName] = useState('');
-  const [msg, setMsg] = useState('');
-
-  async function load() {
-    const d = await api.getStandards();
-    setData(d);
-  }
-
-  useEffect(() => { load(); }, []);
-
-  async function createFromDefaults() {
-    if (!newName.trim()) return;
-    await api.createStandard({ name: newName.trim(), criteria: data.defaultCriteria, isDefault: false });
-    setNewName('');
-    setMsg('Standard created.');
-    load();
-  }
-
-  async function deleteStd(id) {
-    await api.deleteStandard(id);
-    load();
-  }
-
-  async function resetDefaults() {
-    await api.resetDefaults();
-    setMsg('Defaults reset.');
-    load();
-  }
-
-  return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Standards</h2>
-        <button
-          onClick={resetDefaults}
-          className="text-xs px-3 py-1 bg-zinc-700 hover:bg-zinc-600 rounded"
-        >
-          Reset to defaults
-        </button>
-      </div>
-
-      <InfoBox>
-        <p>
-          Standards define the criteria used to evaluate GitHub issues in Step 1.
-          The built-in default criteria cover all requirements from the PR Writer guidelines.
-        </p>
-        <p className="text-xs text-indigo-300">
-          You can save a copy of the defaults under a custom name to create your own standard.
-          Custom standards can then be selected in the Issue Checker dropdown.
-          Use <strong>Reset to defaults</strong> if you've changed something and want to start over.
-        </p>
-      </InfoBox>
-
-      {msg && <div className="text-sm text-green-400">{msg}</div>}
-
-      <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
-        <h3 className="font-medium text-zinc-200 mb-3">Built-in Criteria</h3>
-        <ul className="space-y-2">
-          {data.defaultCriteria.map((c) => (
-            <li key={c.key} className="text-sm">
-              <div className="flex items-center gap-2">
-                <span className="text-indigo-400 text-xs font-mono w-5">W{c.weight}</span>
-                <span className="text-zinc-200">{c.label}</span>
-              </div>
-              <p className="text-xs text-zinc-500 ml-7">{c.description}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="flex gap-2">
-        <input
-          className="flex-1 px-3 py-2 rounded border text-sm"
-          placeholder="New standard name…"
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-        />
-        <button
-          onClick={createFromDefaults}
-          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded text-sm font-medium"
-        >
-          Save as Standard
-        </button>
-      </div>
-
-      {data.standards.length > 0 && (
-        <div className="space-y-2">
-          <h3 className="font-medium text-zinc-300 text-sm">Saved Standards</h3>
-          {data.standards.map((s) => (
-            <div
-              key={s._id}
-              className="bg-zinc-800 rounded p-3 border border-zinc-700 flex items-center justify-between"
-            >
-              <span className="text-sm text-zinc-200">
-                {s.name}{' '}
-                {s.isDefault && <span className="text-xs text-indigo-400">(default)</span>}
-              </span>
-              <button
-                onClick={() => deleteStd(s._id)}
-                className="text-xs text-red-400 hover:text-red-300"
-              >
-                Delete
-              </button>
-            </div>
+      {interactions.length > 0 && (
+        <div className="space-y-5">
+          <p className="text-xs text-zinc-500">{interactions.length} interaction{interactions.length !== 1 ? 's' : ''} parsed</p>
+          {interactions.map((ia) => (
+            <InteractionCard key={ia.num} interaction={ia} />
           ))}
         </div>
       )}
-    </div>
-  );
-}
 
-/* ════════════════════════════════════════════════════
-   HISTORY
-════════════════════════════════════════════════════ */
-function History() {
-  const [history, setHistory] = useState([]);
-
-  async function load() {
-    const d = await api.getHistory();
-    setHistory(d);
-  }
-
-  useEffect(() => { load(); }, []);
-
-  async function del(id) {
-    await api.deleteHistory(id);
-    load();
-  }
-
-  return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold">Check History</h2>
-
-      <InfoBox>
-        <p>
-          All issue evaluations you've run in Step 1 are saved here automatically.
-          Use this to revisit past results, check which issues you've already evaluated,
-          or compare verdicts across different issues.
-        </p>
-      </InfoBox>
-
-      {history.length === 0 && (
-        <p className="text-sm text-zinc-500">No checks yet. Run an issue check in Step 1.</p>
-      )}
-
-      {history.map((h) => (
-        <div key={h._id} className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm font-medium text-zinc-200 truncate max-w-xs">
-              {h.title || h.url}
-            </span>
-            <div className="flex items-center gap-2">
-              <VerdictBadge verdict={h.verdict} />
-              <button
-                onClick={() => del(h._id)}
-                className="text-xs text-zinc-500 hover:text-red-400"
-                title="Delete record"
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-          <div className="text-xs text-zinc-500">
-            {h.owner}/{h.repo} · {h.language} · Score: {h.score}% ·{' '}
-            {new Date(h.createdAt).toLocaleString()}
-          </div>
-          {h.results && <CriteriaList results={h.results} />}
-        </div>
-      ))}
+      <StepNav onPrev={onPrev} />
     </div>
   );
 }

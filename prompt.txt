@@ -1,0 +1,4923 @@
+I am going to make an AI bot that performs a certain task.
+
+Tech Requirment:
+Frontend: Next.js (Electron)
+Backend: Node.js (Express.js)
+Database: MongoDB
+
+The backend should run on the Windows system and the frontend (electron app) should be able to run on the Ubuntu system as the most work is done on the Ubuntu system.
+
+
+Task requirement: 
+    # About the Project
+
+        Home: [](https://www.notion.so/2f57a027d07380c3a4dfd34374704bba?pvs=21) 
+
+        Next: [Learning Curve](https://www.notion.so/Learning-Curve-2f57a027d07381d18796d3e6f1a1aae5?pvs=21) 
+
+        <aside>
+
+        As per the contract signed, all documents shared with you, as well as any platforms and data you have access to, are strictly confidential. You are prohibited from retaining, sharing, or distributing any of this information in any form.
+
+        </aside>
+
+        ---
+
+        ### Table of Contents
+
+        ---
+
+        ### 1. Overview
+
+        The project is a **data labeling project**. Your primary role is a **PR Reviewer**. You will **not code**, but rather interact with two AI models to guide them toward providing **production-ready code** that is good, tested, and clear. In this project, your goal will be to collect human preference data on an LLM's ability to write **production-ready code**, at the level at which if the code was in a Pull Request it would be approved.
+
+        Your task includes:
+
+        1. **Finding or creating a suitable issue**.
+        2. **Preparing the codebase.**
+        3. **Interacting with the AI to solve the given issue and selecting the best answer.**
+        4. **Submitting the task on the HFI Tool and on Revelo's platform.**
+
+        ---
+
+        ### 2. What You'll Be Doing
+
+        In each task, you will select a codebase, that is a git repository, and ask the model to perform a single task in that codebase. Your goal is to, over multiple turns, iterate on the model's solution for that task until it reaches a production-ready state. In addition to iterating on the model's solution, you will guide the models to ensure it is working like a real engineer would. This means that you need to make sure the model is reviewing the code it wrote, validating code against task requirements, committing regularly, etc.
+
+        ---
+
+        ### 3. What is production-ready code?
+
+        The question that should always be in your mind when determining if the model's output is "production-ready" is: "If the model was my co-worker and presented me with this code in a PR, would I happily approve the PR?" Until the answer to that question is yes, you should continue to iterate on the code.
+
+        Production-ready code should:
+
+        - Implement the feature requested thoroughly and completely
+        - Consider legitimate edge cases and handle them
+        - Consider security implications and handle security holes in its implementation where appropriate given the task being completed
+        - Should not contain comments that add no value, are just the model's chain of thought, explain what the model just did (e.g. "# removed code because it's no longer used"), or explain exactly what the code does (instead of the why), or explain obvious things
+        - Should match the style of the existing code (which is why it's extremely important for you to familiarize yourself with the codebase)
+        - Should be well factored, using reasonable abstractions that match the style of the codebase (e.g. don't use classes in a purely function codebase, or vice versa)
+        - Should write comprehensive tests in the style of the codebase if the codebase has tests or the task is to add tests to a codebase with no tests
+
+        ---
+
+        Home: [](https://www.notion.so/2f57a027d07380c3a4dfd34374704bba?pvs=21)
+
+    # Learning Curve
+
+        Previous: [About the Project](https://www.notion.so/About-the-Project-2f57a027d073815e947adc9cefdc748f?pvs=21)
+
+        Next: [Getting Started](https://www.notion.so/Getting-Started-2f57a027d073816e83aac910466f7fc4?pvs=21) 
+
+        <aside>
+
+        As per the contract signed, all documents shared with you, as well as any platforms and data you have access to, are strictly confidential. You are prohibited from retaining, sharing, or distributing any of this information in any form.
+
+        </aside>
+
+        ---
+
+        ### Table of Contents
+
+        ---
+
+        ### 1. What You Need to Know
+
+        Starting a new project always comes with a learning curve. This reward system is designed to help you ramp up confidently **without being penalized for early mistakes**.
+
+        - To unlock more tasks, you need at least **one approved task**.
+        - Your **first submissions are expected to be learning experiences**.
+        - You’ll receive **detailed feedback** to help you improve quickly.
+        - Even if your early tasks aren’t approved, **you may still get paid**.
+
+        ---
+
+        ## 2. Step-by-Step Flow
+
+        ### 2.1 First Task
+
+        - You submit your first task.
+        - It may be R**ejected** or **Below Expectations**.
+        - That’s okay — this is part of the learning phase.
+
+        ⏱️ *Your first two tasks are capped at 3 hours each.*
+
+        ---
+
+        ### 2.2 Second Task
+
+        - You apply the feedback from your first submission.
+        - Your quality improves, even if it’s still **below expectations**.
+        - You continue receiving guidance on how to level up.
+
+        ---
+
+        ### 2.3 Approval Happens 🎉
+
+        - Once your **second or third task is approved (Meets or Above Expectations)**:
+            - ✅ You unlock **access to more tasks immediately**
+            - 💰 You receive **100% payment for previously rejected tasks** (within the learning curve limit)
+
+        ---
+
+        ## 3. Why This Exists
+
+        The Learning Curve Reward is meant to:
+
+        - Reduce pressure on your first submissions
+        - Encourage improvement through feedback
+        - Reward progress, not just perfection
+
+        > Early feedback is part of the process — use it, improve, and you won’t lose out.
+        > 
+
+        ---
+
+        ## Key Limits & Notes
+
+        - The reward applies to your **first two unapproved tasks only**
+        - Each of those tasks is capped at **3 hours**
+        - Once approved, the learning phase ends and normal task flow applies
+
+    # Getting Started
+
+        Previous: [Learning Curve](https://www.notion.so/Learning-Curve-2f57a027d07381d18796d3e6f1a1aae5?pvs=21)
+
+        Next: [Working on the task](https://www.notion.so/Working-on-the-task-2f57a027d0738176b41dde668b7b04a7?pvs=21)  
+
+        <aside>
+
+        As per the contract signed, all documents shared with you, as well as any platforms and data you have access to, are strictly confidential. You are prohibited from retaining, sharing, or distributing any of this information in any form.
+
+        </aside>
+
+        ---
+
+        ## Table of Contents
+
+        ---
+
+        Before jumping in, take a few minutes to read through these instructions and make sure your local setup is ready. This section walks you through installing the required tools and configuring your environment so you can run HFI smoothly and avoid common setup issues later on.
+
+        <aside>
+        🚨
+
+        All these instructions are mandatory.
+
+        </aside>
+
+        ---
+
+        ## 1. Installing tmux
+
+        HFI requires tmux to run the trajectory processes. Many computers already have tmux installed, but it can be added:
+
+        - For **Windows**
+            - Please refer to this documentation: [**[Confidential] Using the Claude Code HFI on Windows**](https://www.notion.so/Confidential-Using-the-Claude-Code-HFI-on-Windows-2c47a027d0738016adf7fee5382c75de?pvs=21)
+        - For **macOS**
+            
+            ```bash
+            brew install tmux
+            ```
+            
+        - For **Linux**
+            
+            ```bash
+            # Linux (Ubuntu/Debian)
+            apt-get install tmux
+            
+            # Linux (RHEL/CentOS)
+            yum install tmux
+            ```
+            
+
+        ### 1.1 Configure scrolling for the tmux terminal (click to expand)
+
+        There is an issue you may encounter when trying to scroll the `tmux`terminal. By default, scrolling won’t work in it. However, there is a workaround if you are using macOS or Linux.
+
+        **Edit the following file:**
+
+        ```
+        nano ~/.tmux.conf
+        ```
+
+        **Then add:**
+
+        ```
+        set -g mouse on
+        set -g history-limit 75000
+        ```
+
+        **Reload the configuration:**
+
+        ```
+        tmux source-file ~/.tmux.conf
+        ```
+
+        ### 1.1.1 I got an error message running the above command (click to expand)
+
+        If you receive a error message saying: `no server running on /tmp/tmux-XXX/default`. You may fix it by following this steps:
+
+        ```bash
+        mkdir -p /tmp/tmux-XXX
+        chmod 700 /tmp/tmux-XXX 
+        tmux new-session
+        ```
+
+        Re-run the `tmux source-file ~/.tmux.conf` 
+
+        ---
+
+        ## 2. Installing VS Code
+
+        HFI requires Visual Studio Code for editing and navigating project files. Many machines already have VS Code installed, but it can be added:
+
+        - For **Windows**
+            - Install from the official website [here](https://code.visualstudio.com).
+            - The installer includes the option to add 'code' to PATH, make sure you mark it
+        - For **macOS**
+            
+            ```bash
+            brew install --cask visual-studio-code
+            ```
+            
+        - For **Linux**
+            
+            ```bash
+            # Linux (Ubuntu/Debian)
+            apt-get install code
+            
+            # Linux (RHEL/CentOS)
+            yum install code
+            ```
+            
+
+        ### 2.1 Add VS Code to your PATH
+
+        After installation, ensure the `code` command is available in your terminal:
+
+        - For **Windows**
+            - During installation, select: "Add to PATH" and "Add 'code' command to context menu"
+            - If you didn't check "Add to PATH" during installation:
+                1. Open VS Code
+                2. Press Ctrl+Shift+P
+                3. Search for: "Shell Command: Install 'code' command in PATH"
+                4. Run that command
+        - For **macOS**
+            
+            ```bash
+            ln -s "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" /usr/local/bin/code
+            ```
+            
+        - For **Linux**
+            
+            ```bash
+            # Linux (Ubuntu/Debian/RHEL/CentOS)
+            # Usually added automatically. If not, add the bin folder to PATH:
+            echo 'export PATH="$PATH:/usr/share/code/bin"' >> ~/.bashrc
+            source ~/.bashrc
+            ```
+            
+
+        ---
+
+        ## 3. Installing HFI Tool
+
+        - Download [here](https://feedback.anthropic.com/claude_code?email_login=true](https://feedback.anthropic.com/claude_code?email_login=true) the appropriate version for your OS.
+            - For logging in, use your **Revelo expert email.**
+            - You'll receive a code in your personal email, which you should use to login to the platform.
+
+        <aside>
+        ⚠️
+
+        Sometimes the first login may fail when using the code you received. Just try again.
+
+        </aside>
+
+        After downloading, rename the file and make it executable:
+
+        ```bash
+        mv ~/Downloads/<image-name> claude-hfi
+        chmod +x claude-hfi
+        ```
+
+        Then, add it to your path:
+
+        - For **Windows**
+            - Windows PowerShell (user PATH)
+                
+                ```bash
+                setx PATH "$Env:PATH;$(Join-Path (Get-Location) 'claude-hfi')"
+                ```
+                
+            - Windows CMD (Command Prompt)
+                
+                ```bash
+                setx PATH "%PATH%;%cd%\\claude-hfi"
+                ```
+                
+            - Git Bash / WSL on Windows (bash)
+                
+                ```bash
+                echo "export PATH=\"\$PATH:$(pwd)/claude-hfi\"" >> ~/.bashrc
+                source ~/.bashrc
+                ```
+                
+        - For **macOS**
+            
+            ```bash
+            echo "export PATH=\"\$PATH:$(pwd)/claude-hfi\"" >> ~/.zshrc
+            source ~/.zshrc
+            ```
+            
+        - For **Linux**
+            - bash
+                
+                ```bash
+                echo "export PATH=\"\$PATH:$(pwd)/claude-hfi\"" >> ~/.bashrc
+                source ~/.bashrc
+                ```
+                
+            - system-wide, all users
+                
+                ```jsx
+                echo "export PATH=\"\$PATH:$(pwd)/claude-hfi\"" | sudo tee -a /etc/profile
+                ```
+                
+
+        ---
+
+        ## 4. Running VS Code mode
+
+        You will use this mode for the project:
+
+        ```bash
+        claude-hfi --vscode
+        ```
+
+        Run `claude-hfi --help` to see all available CLI options.
+
+    # Working on the task
+
+        Previous: [Getting Started](https://www.notion.so/Getting-Started-2f57a027d073816e83aac910466f7fc4?pvs=21) 
+
+        Home: [](https://www.notion.so/2f57a027d07380c3a4dfd34374704bba?pvs=21) 
+
+        <aside>
+
+        As per the contract signed, all documents shared with you, as well as any platforms and data you have access to, are strictly confidential. You are prohibited from retaining, sharing, or distributing any of this information in any form.
+
+        </aside>
+
+        ---
+
+        ### Table of Contents
+
+        ---
+
+        This guide walks you through the PR Writer workflow step by step. If this is your first task, don’t worry — just follow the sections in order. By the end, you’ll know exactly how to set up your environment, guide the AI, review results, and submit your work with confidence.
+
+        Think of this as a **guided checklist**, not a test. Take it one step at a time.
+
+        ---
+
+        # 1. Select the Codebase and Issue
+
+        In this phase, you choose the repository and the issue you will work on. To save time and reduce risk, **pre-selected codebases and issues are strongly recommended**.
+
+        <aside>
+        <img src="notion://custom_emoji/8ec66e17-eee2-411b-8df3-403c1ad5217a/1317a027-d073-8039-a03f-007ae98b810c" alt="notion://custom_emoji/8ec66e17-eee2-411b-8df3-403c1ad5217a/1317a027-d073-8039-a03f-007ae98b810c" width="40px" />
+
+        Here, you can start your task at Revelo's Platform.
+
+        </aside>
+
+        ## 1.1 Use Pre-Selected Issues (Recommended)
+
+        **Available issues:**
+
+        - **Python**: [https://docs.google.com/spreadsheets/d/1WnGf8ULFHVpTjnpLz46DH-UrvOCLtkDmqilZLzaS4KM/edit?gid=1184439532#gid=1184439532](https://docs.google.com/spreadsheets/d/1WnGf8ULFHVpTjnpLz46DH-UrvOCLtkDmqilZLzaS4KM/edit?gid=886975217#gid=886975217)
+        - **Javascript**: https://docs.google.com/spreadsheets/d/1Td0PgBZ_7eoXpK1Icc6CEDurArGmej72w7SMr4Z7Gqs/edit?gid=886975217#gid=886975217
+        - **Typescript**: https://docs.google.com/spreadsheets/d/1KN6TVPXoQzPllSDbpO044JcmO-G4D7wiRHAiCi08MaY/edit?gid=886975217#gid=886975217
+
+        Before claiming an issue:
+
+        - Always check to see if the codebase is valid. Here are some requirements:
+            - **Python, Javascript or Typescript** and hosted in a Git repository
+            - **≤ 200 MB** at the selected commit
+            - **Understandable** enough for you to review PRs confidently
+            - **Executable**, with clear build and run instructions
+            - **Dependency-complete**, using standard package managers (pip/conda/npm)
+            - **Tests** present
+            - Written entirely in **English**
+            - Other quality signals (recommended, not mandatory):
+                - Linters or formatters configured
+                - Actively used open-source projects (especially for applications)
+        - Get familiar with the repository and feel free to use AI to learn more about its concepts and how it's structured.
+        - Validate that the issue is **non-trivial** and will require multiple iterations.
+
+        <aside>
+        ⚠️
+
+        If the model can fully solve the issue in 1–2 interactions, the task is too easy. Choose a more complex issue.
+
+        </aside>
+
+        ### 1.1.1 What a Good Issue Looks Like
+
+        ✅ **Well-scoped examples**
+
+        - Add async/await support to existing callback-based APIs while preserving backward compatibility
+        - Introduce a `-dry-run` flag that reports changes without executing them
+        - Refactor validation logic to use a schema-based approach
+
+        ❌ **Poorly-scoped examples**
+
+        - Build a full admin dashboard (too broad)
+        - Rename a variable as a standalone task (too trivial)
+        - "Add some validation" (vague)
+        - Issues described only by a link
+
+        ---
+
+        ## 1.2 Manual Codebase Selection (If Needed)
+
+        Only use this path if pre-selected options are unavailable. You may reuse a codebase from a previous interaction if it has meaningfully evolved. Change the language on the link if needed.
+
+        **GitHub search helper link:**
+
+        [https://github.com/search?q=language%3APython+stars%3A>%3D200+NOT+collection+NOT+list+NOT+guide+NOT+projects+NOT+exercises&type=repositories&s=stars&o=desc](https://github.com/search?q=language%3APython+stars%3A%3E%3D200+NOT+collection+NOT+list+NOT+guide+NOT+projects+NOT+exercises&type=repositories&s=stars&o=desc)
+
+        <aside>
+        ⚠️
+
+        Remember:[Always check to see if the codebase is valid. Here are some requirements:](https://www.notion.so/Always-check-to-see-if-the-codebase-is-valid-Here-are-some-requirements-2f57a027d07381cc8c14d98692367fac?pvs=21) 
+
+        </aside>
+
+        ---
+
+        ## 1.3 Manual Issue Definition
+
+        If defining your own issue:
+
+        - Focus on **one clear problem** (feature, refactor, extension, or tests)
+        - Aim for **medium to high complexity**
+        - Ensure the task would realistically fit in a single Jira/Asana ticket
+
+        Avoid tasks that could be split into multiple independent tickets.
+
+        Record the **repository, issue type, and issue link (not PR)** in Revelo immediately to avoid conflicts.
+
+        <aside>
+        ⚠️
+
+        If the model consistently produces perfect results in 1–2 turns, increase scope or complexity.
+
+        </aside>
+
+        ---
+
+        <aside>
+        <img src="notion://custom_emoji/8ec66e17-eee2-411b-8df3-403c1ad5217a/1317a027-d073-8039-a03f-007ae98b810c" alt="notion://custom_emoji/8ec66e17-eee2-411b-8df3-403c1ad5217a/1317a027-d073-8039-a03f-007ae98b810c" width="40px" />
+
+        After you finished selecting you issue, you must submit it on Revelo's Platform. This will guarantee that no one else with work on the same issue. The issue locking is first-come/first-serve, so always remember this to avoid any problem.
+
+        </aside>
+
+        <aside>
+        ⚠️
+
+        If on your codebase evaluation, you find the issue is to easy, you can edit your choice on the platform.
+
+        </aside>
+
+        # 2. Prepare the Codebase
+
+        ### 2.1 Environment Setup
+
+        - Clone the repository locally
+        - Checkout the commit **before** the issue was solved
+
+        **Finding the base commit**
+
+        Use the Pre-Selected Issues spreadsheet to extract the `base_sha` there's a column with this information.
+
+        **If the repo exceeds 200 MB**
+
+        Rebuild Git history by reinitializing the repository at `base_sha` and committing that state. You can check it [here](https://www.notion.so/Troubleshooting-2f57a027d0738140b3c4d057bb8db737?pvs=21)
+
+        ### 2.2 Configure Git Author and Committer
+
+        Configure Git locally before committing:
+
+        ```bash
+        git config user.name "PR Writer" && git config user.email "prwriter@reveloexperts.com"
+        ```
+
+        ### 2.3 Build Instructions and Dockerfile
+
+        Every codebase must:
+
+        - Include a **README** explaining how to run the project and tests (not Docker-only instructions)
+        - Provide a **working Dockerfile** at the repository root.
+
+        <aside>
+        <img src="notion://custom_emoji/8ec66e17-eee2-411b-8df3-403c1ad5217a/1317a027-d073-8039-a03f-007ae98b810c" alt="notion://custom_emoji/8ec66e17-eee2-411b-8df3-403c1ad5217a/1317a027-d073-8039-a03f-007ae98b810c" width="40px" />
+
+        You can use one from Docker library inside the Platform. We suggest to always use a simple one that works, always the simpler, the better.
+
+        </aside>
+
+        - Pin dependency versions and remove lock files
+        - Build and run tests successfully
+
+        Commit all setup changes using:
+
+        ```bash
+        git commit --author="PR Writer <prwriter@reveloexperts.com>" -m "Set up initial instructions"
+        ```
+
+        <aside>
+        <img src="notion://custom_emoji/8ec66e17-eee2-411b-8df3-403c1ad5217a/1317a027-d073-8039-a03f-007ae98b810c" alt="notion://custom_emoji/8ec66e17-eee2-411b-8df3-403c1ad5217a/1317a027-d073-8039-a03f-007ae98b810c" width="40px" />
+
+        Remember to get the initial commit SHA and save it on Revelo's Platform, submitting the form along with the dockerfile used.
+
+        </aside>
+
+        ---
+
+        # 3. Prompting the Model
+
+        To help you get started smoothly, here are the guidelines for how AI tools may (and may not) be used during this task. AI can support understanding and setup, but all evaluation and judgment must be done by you. Please read carefully — breaking these rules will result in task rejection.
+
+         ✅ **You may use AI to:**
+
+        - Understand the codebase
+        - Create Dockerfiles
+        - Pin dependencies
+        - Clarify unfamiliar implementation details
+
+        ❌ **You may NOT use AI to:**
+
+        - Evaluate or compare model outputs
+        - Write follow-up prompts
+        - Generate pros/cons or preferences
+
+        <aside>
+        🚨
+
+        Any violation of AI usage will result in task rejection.
+
+        </aside>
+
+        ## 3.1 Model Interaction
+
+        ### 3.1.1. Using Claude-HFI
+
+        After, you prepared you codebase. You are ready to start interacting with the model. For this, there are some steps to follow to ensure a smooth flow.
+
+        **1.1. Start a `tmux` session**
+
+        This step will help you in case your terminal crashes. It will enable you to reattach to the tmux session. However, keep in mind tmux sessions don't survive PC restarts.
+
+        - Navigate to the chosen repository folder
+        - Start a tmux session:
+            
+            ```bash
+            tmux new -s task
+            ```
+            
+        - To reattach a session:
+            
+            ```bash
+            tmux attach -t task
+            ```
+            
+
+        <aside>
+
+        💡 ****You can copy from `tmux` terminal by holding down a key that lets your terminal handle selection and copying, sending it directly to your clipboard. 
+
+        - **Linux:** Hold down `Shift` while selecting the text with your mouse. Then, use your terminal's standard copy shortcut (usually `Ctrl+Shift+C`).
+        - **macOS:** Hold down the `Fn` or `Option` ( `⌥` ) key while selecting the text with your mouse. Use `Command+C` to copy.
+
+        [Super User](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAANlBMVEVHcEwFre4QDw0QDw0Fre4Fre4Hls4QDw0QDw0QDw0Fre4Fre4Fre4Fre4GndcQDw0Fre4QDw1OcNxlAAAAEHRSTlMAsG1YQu0OyEfvn4LSXiWZo3HwMgAAAkhJREFUeJzt2u1yhCAMBVBUQAVB+/4vW/dLiWvdkkTpTHOnv1qmnGVBJaKURCKRSCQSiURynDi2+7GvFtYPtzgf9BmArv/aT/Nqoc20xAV79M/OB0yTcZrXkAuYCRXrV5EPuI0C4yBgANM08A0CDjBN/mxA3y2AwewR3AmAvlnTrU2i1joEt1UwjUEKaI8aWhsGKAjXAm4Jhl+QBVCxAmshXg7YCDimQSZAWTARGIYgF6As81rMBiifCkoAbLoU6AshHwCGoCoB0OlKJN8XMYBkIRjyOkAAYgog35cRAFsJQAACEIAALgfYe4oBunFs7z9NGUDSoisCqNcGYxHA+KcB9KdSKoC8OaICyFsTKoC8Qc1aBfXjN2BvRP0OPgNiu/z9+WlBmYC6Dn5xJbTds2zzuhjDHbKh7U0QN6N5CCYgIE0DFEBVUOAJBBwgbkpmA56AA7xXLweHnIxIANihLisSMx2xAGXdjuBKwLwW3gYBc10mAJTdFC6vHoE5rugIRM9Rv8YD3qfAtSPg37rHPR5hATv9497jIAHb/k2FfaOIA+hN99jrMBoA5x/pRSLD8wDqFkADgAEgPhRiAOBeXBGrxRhAugTIezMMIL0DkOv1xArJFVuzQ8B/qREJQAACEIAABCAAmFgcUPr1fborKAEA5SneExT9WK9JevRzgn4kwBol7xkSkA8HGp/hPUWDAPCeI8oHGHL/RADD2VYKwHCcaMQDKGWRFPBD/x8AQ+WZjnjbpt7P2iI4EB+CjpH9kLtEIpFIJKflG5oVsMUpk6ieAAAAAElFTkSuQmCC)
+
+        </aside>
+
+        **1.2. Starting HFI**
+
+        - Inside the tmux terminal, run
+            
+            ```bash
+            claude-hfi --vscode
+            ```
+            
+        - After this command a few things will happen:
+            - First, an Authentication page may appear, especially if it's your first time. Once authenticated, you're back at the prompt.
+            - After that, `claude-hfi` will start two different trajectories, one for model A and another for model B. So, you will have two different VS Code windows opened automatically. Now, for you to be able to see each model reasoning you have to attach the sessions on the integrated terminals in VS Code:
+                - In trajectory A's VS Code window, open terminal and run:
+                    
+                    ```bash
+                    tmux attach -t <session-id>-A
+                    ```
+                    
+                - In trajectory B's VS Code window, open terminal and run:
+                    
+                    ```bash
+                    tmux attach -t <session-id>-B
+                    ```
+                    
+            - And for last, will ask you to enter it interface code, just type:
+                
+                ```bash
+                cc_agentic_coding
+                ```
+                
+
+        ![Screenshot 2025-12-03 at 15.39.48.png](attachment:f6cf8c2a-5c04-4047-a431-b2a5a9dfa849:Screenshot_2025-12-03_at_15.39.48.png)
+
+        <aside>
+        <img src="notion://custom_emoji/8ec66e17-eee2-411b-8df3-403c1ad5217a/1317a027-d073-8039-a03f-007ae98b810c" alt="notion://custom_emoji/8ec66e17-eee2-411b-8df3-403c1ad5217a/1317a027-d073-8039-a03f-007ae98b810c" width="40px" />
+
+        Remember, when starting the HFI Tool, it will give you an UUID. Save this Anthropic's UUID, it will be used later when finishing the task. 
+
+        > In this case, the session ID would be: `e9b280a1-9079-425b-99cd-0cf7417dae35`
+        > 
+        </aside>
+
+        ### 3.1.2 First prompt
+
+        - Re-write the issue description in your on words, we want to evaluate the model against freeform text. Ensure the prompt is clear and explicitly states the solution that should be implemented. 
+        Imagine you're sending this issue to a mid-level software engineer. Writing tests, covering edge cases, and committing the solution are already expected, so don't include that in your prompt.
+        - Remove any links and images that the issue description might have.
+
+        ### 3.1.3 Second prompt and forward
+
+        - Treat follow-ups as **PR review comments**
+        - Do not expand scope
+        - Do not add system instructions
+        - Remember to ask the model to **commit all final changes** before ending the interaction.
+
+        <aside>
+        <img src="notion://custom_emoji/8ec66e17-eee2-411b-8df3-403c1ad5217a/1317a027-d073-8039-a03f-007ae98b810c" alt="notion://custom_emoji/8ec66e17-eee2-411b-8df3-403c1ad5217a/1317a027-d073-8039-a03f-007ae98b810c" width="40px" />
+
+        You should always pause the task in Revelo's platform while the model is running. Once is finished you can resume the task on the platform.
+
+        </aside>
+
+        ## 3.2 Review and Preference Selection
+
+        <aside>
+        ⚠️
+
+        **This is the most important part of the task.**
+
+        </aside>
+
+        For every interaction, you have to evaluate the models answer and guarantee that did everything right. You have to repeat this until the solution is production ready. HFI automatically applies the changes from the winning response to the source code after evaluation. 
+
+        You validations include:
+
+        - Run tests
+        - Verify engineering best practices
+        - Leave PR-style feedback until production-ready
+        - Always provide **both pros and cons**
+        - Score applicable axes (logic, clarity, docs, readiness, etc.) independently from overall preference. You have to:
+            - Rate which model did better, move the selection using the arrow keys.
+            - Provide feedback to the models. Every response should have "pros" and "cons". There will be exactly 0 cases where the model did everything 100% correctly, so there should **always** be both. Your pros and cons should point to specific examples in the transcript.
+                - Cons should cover, for example:
+                    - Recurring issues with the model's code.
+                    - Cases where the model made assumptions instead of seeking clarification.
+                    - Cases where the model hallucinated (e.g. thought a dependency install succeeded when it did not).
+                    - Effectively anything where you think "that's not how I would have done this".
+                - Pros should cover, for example:
+                    - Good naming for methods and classes
+                    - Good documentation
+                    - Clear commits
+                    - Good test coverage
+                    - Effectively solving the issue
+
+        <aside>
+        <img src="notion://custom_emoji/8ec66e17-eee2-411b-8df3-403c1ad5217a/1317a027-d073-8039-a03f-007ae98b810c" alt="notion://custom_emoji/8ec66e17-eee2-411b-8df3-403c1ad5217a/1317a027-d073-8039-a03f-007ae98b810c" width="40px" />
+
+        Again, you should always pause the task in Revelo's platform while the model is running. Once is finished you can resume the task on the platform.
+
+        </aside>
+
+        ---
+
+        # 4. Submit the Task
+
+        Once the solution is production-ready and fully committed, exit with **Ctrl + C,** from the HFI Tool. After that you have to:
+
+        - Inform the Anthropic's UUID that the HFI gave you.
+        - Upload the .tar of your task on Revelo’s Platform.
+
+        ### 4.1 Final Validations
+
+        Before uploading, you have to make sure of:
+
+        1. When preparing the TAR, **use the original repository folder**, *never* the worktrees.
+        2. **Verify that all changes and commits are present** in the original repo folder.
+        3. If any expected commits **are missing**, notify us immediately so we can decide how to proceed.
+
+        After this, you can compress your task repo, as follows:
+
+        ```bash
+        cd ..
+        tar cf final_result.tar <repo-folder>
+        ```
+
+        ### 4.2 **Successfully** Finishing
+
+        Now that you have the tar file with your repo. You can used to upload it on the Revelo's Platform. There are 4 steps to follow to ensure a correct submission:
+
+        1. Fill the corresponding fields with the Anthropic's UUID (SessionID)
+        2. Insert the prompt you used on your first interaction.
+        3. Upload the fina tar.
+        4. Select the successful options on your task's result.
+
+        After that, all that is left is to click on the **Submit** button.
+
+        ### 4.3 Error Qualifications
+
+        Sometimes, we encounter problems working on a task. Sadly, this is not want we all want, but it happens. We have three types of situations that can arise:
+
+        1. The model took too long to respond (over an 1 hour)
+        2. After 6 interactions the model didn't solve the issue
+        3. An unexpected error on the models or the HFI Tool
+
+        For all the above cases, you can submit your tasks by selecting the appropriate options on Revelo's Platform and upload a complete screenshot of the problem.
+
+        <aside>
+        🎉
+
+        Congratulations, you finished your task!
+
+        </aside>
+
+    # FAQ
+
+        <aside>
+
+        As per the contract signed, all documents shared with you, as well as any platforms and data you have access to, are strictly confidential. You are prohibited from retaining, sharing, or distributing any of this information in any form.
+
+        </aside>
+
+        ## Table of Contents
+
+        ---
+
+        # FAQ
+
+        Click to expand the answers.
+
+        ## **1. Platforms**
+
+        ### **How do I log in to the Anthropic platform?**
+
+        You will use your `reveloexperts.com` email. You will then receive a code via the personal email address you used to register with Revelo, which is used to log in.
+
+        ---
+
+        ---
+
+        ## **2. Task Selection and Codebase Setup**
+
+        ### **How many tasks can I execute when I start, and why am I seeing that there are no tasks available?**
+
+        There are two phases of the project: **learning curve** and **qualified**. During the learning curve (your first 3 tasks) you'll be able to execute just one task before receiving feedback. This feedback will be critical for you to learn where you can improve. After these 3 initial tasks, if we notice you learned from the feedback and got better, you'll be promoted to qualified, which will allow you to execute as many tasks as you want. If you fail to improve quality in your initial 3 tasks, your participation in the project will potentially be suspended.
+
+        ---
+
+        ### **What are the key requirements for selecting a suitable repository?**
+
+        The repository must be:
+
+        - In **Python, Javascript or Typescript**.
+        - Be **executable**, have correct dependencies, and ideally have tests.
+        - The same repository should **not be used repeatedly**.
+        - **Crucially, the repository size must not exceed 200 MB** after cloning, as too large a repository will prevent task completion by slowing the model.
+
+        ---
+
+        ### **What defines a good issue for this project?**
+
+        A good issue challenges the model at a production-grade level. We look for:
+
+        - A brand new feature, an extension of an existing feature, a refactor, a reimplementation, or the addition of tests.
+        - The solution PR must have changed **at least four code files** (tests count).
+        - The changes must implement something real — not just minor alterations like adding a comma or changing documentation.
+
+        ---
+
+        ### **What is the very first step after selecting an issue?**
+
+        You must **freeze the issue** in the Revelo platform by inserting the repository and existing issue **before** doing any work on the Dockerfile or Readme. This prevents other people from taking the same issue.
+
+        ---
+
+        ### **How do I find the correct version (Base SHA) of the code to use?**
+
+        You must check out to the **commit SHA that was active before the issue was opened**. Using code from the "future" likely means the issue is already solved.
+
+        If the Base SHA is **not provided** in the pre-selected issues spreadsheet, you must manually find it by checking the issue’s opening date and reviewing the repository’s releases to find the state immediately preceding that date.
+
+        ---
+
+        ### **What are the requirements for the Readme file?**
+
+        The Readme must contain **human-readable, step-by-step instructions** for the model on how to run the repository and tests.
+
+        - **Do not** tell the model to use `git clone`.
+        - **Do not** tell the model to run the Dockerfile (the Dockerfile is for us to check your work).
+        - **Avoid emojis** in the Readme, as they are not helpful for AI.
+
+        ---
+
+        ### **What MUST be done after the setup (Dockerfile, Readme, dependencies) is complete?**
+
+        You must commit all setup changes, get the **SHA** (commit hash) for that commit, and paste it into the Revelo platform. If this SHA is incorrect, the setup verification will fail and you may lose your task.
+
+        ---
+
+        ### I think I may need to create a dockerignore file. Is it OK to create one?
+
+        No, it is not. There is no need of a dockerignore file.
+
+        ---
+
+        ### If I choose a codebase and issue that are not in the spreadsheet, should I mark “new issue” in the Revelo platform?
+
+        **No**. If it's an issue that exists in Github, it should always be marked as an “existing issue”. You'll only mark “new issue” if you know the repository well enough to create a new issue from scratch.
+
+        ---
+
+        ---
+
+        ## **3. Model Interaction and Evaluation**
+
+        ### What should I do if the model solves the issue completely in two or fewer interactions?
+
+        This means that the issue was not complex enough. You should finish your task in Anthropic, find a new issue, do the setup again, update the repository and issue link in Revelo, and start a new task in the tool with it.
+
+        **Important:** Remember to update the Anthropic Task ID in Revelo once you start the new task in the new tool; otherwise, we won't be able to link your task correctly.
+
+        ---
+
+        ### **What are the constraints for the first prompt sent to the model?**
+
+        You must **only copy and paste the issue link and description exactly as it is**. You **cannot insert any new content** (e.g., “please act like an engineer” or “follow TDD”). You may, however, remove irrelevant information.
+
+        ---
+
+        ### **How should I proceed after sending the first prompt?**
+
+        You must copy the **Conversation ID** from Anthropic and paste it into Revelo. While the model runs in the background (which can take 15 minutes to 1 hour), you must **pause your task** in Revelo.
+
+        You can see the **Conversation ID** by checking the name of the `tmux` sessions the tool gave to you.
+
+        ---
+
+        ### **How should I evaluate the two solutions (A and B) provided by the model?**
+
+        1. Check both VSCode windows’ change files and run the tests in a separate terminal for each of them.
+        2. Write the **pros and cons** for both answers in **your own words** — this is the **most important part** of the task.
+        3. Evaluate them using the **Likert preference scale**, ensuring your rating aligns with the solution you choose as best.
+
+        ---
+
+        ### **Which solution is used for the next iteration?**
+
+        Only the solution you select as best (A or B) will be used as the **input for the next model interaction**.
+
+        ---
+
+        ### **What type of files should the model be instructed to remove?**
+
+        Instruct the model to remove automatically created files that contain only documentation, test logs, or "AI gibberish" (e.g., `complete_solution.md`), as these should not be part of the final PR.
+
+        ---
+
+        ### If the model produce the same exact code as in a “Perfect-Tie” scenario, I can’t distinguish one as better. What should I do?
+
+        In this case, you should choose one of the model as better, even as slightly better. Despite given the same answers, the models did the correct work, as such there is no N/A answer and there is positive and negative feedback. Proceed with the evaluation all the axis accordingly with your choice and describing the PROs and CONs of that solution based on your programming knowledge and best-practices. Your overall preference have to be aligned to your chosen model and axis evaluation.
+
+        ---
+
+        ---
+
+        ## **4. Quality, AI Usage, and Submission**
+
+        ### **Where is the use of external AI restricted?**
+
+        You **must not use AI** to:
+
+        - Solve your tasks.
+        - Validate model responses.
+        - Write follow-up prompts.
+        - Write the pros and cons.
+
+        Unauthorized AI usage will result in the task being **rejected** and you being **removed from the project**.
+
+        Rule of thumb: **“If you’re in doubt about using AI, it means you can’t.”**
+
+        ---
+
+        ### **How is payment determined by task quality?**
+
+        | Quality Score | Payment Outcome |
+        | --- | --- |
+        | **Above** **Expectations** | Standard rate + **20% bonus** |
+        | **Meets Expectations (OK)** | **Standard flat rate** |
+        | **Below Expectations (Severe error)** | **50% deduction** |
+        | **Task Rejected (Not usable)** | **No payment** |
+
+        ---
+
+        ### **What should I do if the model does not respond in a timely manner?**
+
+        If the model takes **longer than one hour** to respond, use the specific submission option, take a screenshot of the running time, provide an explanation, finish the task in the tool (Ctrl + C) and submit the task.
+
+        ---
+
+        ### **What should I do if the model fails to reach a solution after multiple attempts?**
+
+        If you complete **over six interactions** and the model still hasn’t reached a production-ready solution, use the specific submission option. Provide an explanation detailing why the model failed (e.g., failing tests, regression, or hallucination) and submit a screenshot of your last prompt.
+
+        Also, don't forget to finish the task in the tool.
+
+        ---
+
+        ### **After the learning curve, can the task only be approved or rejected, or do we still get different quality indicators?**
+
+        Every task will continue to be evaluated using the same scale: **Unusable**, **Below Expectations**, **Meets Expectations** and **Above Expectations**.
+
+        ---
+
+        ### My task was reviewed, and I disagree with the reviewer's decision regarding its quality.  What can I do about it? Is there an Appeal Form?
+
+        The form is available https://forms.gle/T8quBqwpum7REPpTA and is pinned on the Useful Links tab on the Slack channel. Remember the rules:
+
+        - Only tasks marked as **Rejected** are eligible for appeal.
+        - You may submit **only 1 appeal per week** (the form accepts one submission at a time).
+        - Only tasks that are **up to 3 days old** are eligible for appeal.
+        - You must use the **same email associated with your Revelo Platform account** when submitting the form.
+
+        The possible outcomes are:
+
+        Each appeal can result in one of two outcomes:
+
+        - If the appeal is **rejected again**, you will lose the right to submit another appeal the following week.
+        - If the appeal is **accepted**, you will maintain your right to appeal the following week.
+
+        ---
+
+        ### How should I compress the final result into a tar file?
+
+        ⚠ **Extremely important — TAR compression process**
+
+        1. Always ask the model to **commit all final changes** before ending the interaction.
+        2. When preparing the TAR, **use the original repository folder**, *never* the worktrees.
+        3. Before compressing, **verify that all changes and commits are present** in the original repo folder.
+        4. If any expected commits **are missing**, notify us immediately so we can decide how to proceed.
+
+        ---
+
+        ---
+
+        ## **5. Compensation and Onboarding Bonuses**
+
+        ### **How does the Learning Curve bonus work?**
+
+        The Learning Curve applies to your **first three tasks**. You will be blocked after each task until you receive feedback. If you achieve a **Meets or Above Expectations** score on the third task, you will receive **100% payment** for the first two tasks, even if they initially scored poorly.
+
+        I am on the Learning Curve and got my first approval with a Meets Expectations score, but I'm still not able to work on more than one task without it being reviewed. Why is that?
+
+        Tasks that are submitted as Internal Error, or one of the error qualifications, does not count toward the Learning Curve goal, only Finished Successfully ones. Tasks that are finished successfully (production-ready code) and was approved with Meets or Above Expectations quality.
+
+        ---
+
+        ### **What are the pay rate and time constraints for a single task?**
+
+        The hourly rate is **$30 per hour**. The maximum billable time is **five hours**. The maximum task duration is five and a half hours, after which the task expires. You can leave the task paused for **two day**.
+
+        ---
+
+        ### **How do I earn the Streak Bonus?**
+
+        This bonus is paid via payroll and is **not dependent on task review**.
+
+        - Continue working for **five more consecutive days** (total 15) to earn an additional **$75 bonus each five days**.
+        - Work on tasks for **ten consecutive days** to earn a **$60 bonus**.
+        - Work on tasks for **five consecutive days** to earn a **$50 bonus**.
+
+        After successfully passing the Learning Curve:
+
+        ---
+
+        ### **I'm worried about the streak because I'm unable to pick a new task. I have 8 tasks pending review. Can this limit be increased?**
+
+        No, the limit guarantees quality and cannot be raised. Don’t worry — no one has lost a streak because of this. Our review team works diligently to ensure you’re not blocked from starting a new task if your quality remains good.
+
+    # Troubleshooting
+
+        <aside>
+
+        As per the contract signed, all documents shared with you, as well as any platforms and data you have access to, are strictly confidential. You are prohibited from retaining, sharing, or distributing any of this information in any form.
+
+        </aside>
+
+        ## Table of Content
+
+        ---
+
+        ## Troubleshooting
+
+        Click to expand the answers.
+
+        ### What should I do if I get a 401 when entering the interface code?
+
+        ![image (49).png](attachment:291c9df5-7503-4a23-87c6-7186cbcba180:image_(49).png)
+
+        ```bash
+        rm -rf claude-hfi
+        ```
+
+        Then, logout from the Anthropic platform here: https://feedback.anthropic.com/logout
+
+        After that, download and setup the newest version for your architecture from here:
+
+        ‣ 
+
+        ---
+
+        ### What should I do if the model shows me a message that states “This conversation has reached the maximum token limit and cannot be continued”?
+
+        This should not happen. Report it immediately with screenshots, let us know, finish the task in the tool (Ctrl + C), and submit your task as internal_error with your screenshot.
+
+        ---
+
+        ### What should I do if the Anthropic Model gave me an Internal Error in my first interaction with the model?
+
+        This should not happen. Report it immediately with screenshots, let us know, finish the task in the tool (Ctrl + C), and submit your task as internal_error with your screenshot.
+
+        ---
+
+        ### What should I do if the Anthropic Model gave me an API Error in my first interaction with the model?
+
+        This should not happen. Report it immediately with screenshots, let us know, finish the task in the tool (Ctrl + C), and submit your task as internal_error with your screenshot.
+
+        ---
+
+        ### I submitted the prompt to the hfi, but the VSCode trajectory for both models showed this message **"Context low · Run /compact to compact & continue"** without returning any response. What should I do?
+
+        You should follow these steps:
+
+        1. Stop the interaction by clicking on CTRL+C twice and exiting the tool;
+        2. Close the old VS Code windows;
+        3. Start a new session with `claude-hfi --vscode`;
+        4. Copy the new UUID;
+        5. Paste in the new field on Revelo Platform;
+        6. Continue your task normally, resubmitting the prompt that would be the next from the previous session.
+
+        Remember to save all UUIDs generated by HFI and add them to Revelo's platform.
+
+        ---
+
+        ### After a submit a prompt, one of the models, A or B, is waiting my input to finalize the plan, giving me options. What should I choose?
+
+        ![image.png](attachment:bb2c16d2-9e42-4722-8295-81d29f1c77b4:image.png)
+
+        When an model asks for your input to know how to proceed and gives you three options. You should choose the first option: **Yes, and bypass permissions**.
+
+        ---
+
+        ### **My initial repository larger than 200MB. What can I do?**
+
+        If you want to work on a repository that is larger than 200 MB, you can reduce its size by rebuilding the `Git` repository. To do this, create a new `Git` repo, check out the `base_sha` and make an initial commit with that state.
+
+        **Remove the existing Git repository**
+
+        ```bash
+        rm -rf .git
+        Initialize a new Git repository
+        ```
+
+        **Initialize a new Git repository**
+
+        ```bash
+        git init
+        ```
+
+        **Create a commit with the initial state of the repository**
+
+        ```bash
+        git add .
+        git commit -m "Repo initial state"
+        ```
+
+        Then, add your setup commit and continue with the task.
+
+        ---
+
+        ### The final tar file or repository is larger than 200mb. What can I do to make it smaller?
+
+        You have two options:
+
+        - You can generate a `tar.gz`
+        - You can create another folder with a shallow clone of only the last commits.
+
+        ```
+        git rev-list --count <hash>..HEAD
+        ```
+
+        hash is the initial setup commit (if you want the base commit for the setup, add +1 to the count)Then, in another folder
+
+        ```
+        git clone --depth n file:///path/to/local/repo /path/to/new-folder
+        ```
+
+        And this new folder will have only the past n commits from the repo.
+
+        ---
+
+        ### How can I copy from the tmux terminal?
+
+        You can copy from `tmux` terminal by holding down a key that lets your terminal handle selection and copying, sending it directly to your clipboard. 
+
+        - **Linux:** Hold down `Shift` while selecting the text with your mouse. Then, use your terminal's standard copy shortcut (usually `Ctrl+Shift+C`).
+        - **macOS:** Hold down the `Fn` or `Option` ( `⌥` ) key while selecting the text with your mouse. Use `Command+C` to copy.
+
+        ---    
+
+    # Quick Reference
+
+        ### Repository and issue selection
+
+        The time spent looking for an issue does not count as work time. To help with this process, we provide a spreadsheet (link available in the guidelines).
+
+        The fact that we provide this help does not mean you can skip the initial review. You are still expected to verify that the issue and the repository are suitable.
+
+        For example, you should quickly check the PR to see:
+
+        - whether there are many file changes
+        - whether the changes are in Python, documentation, or something else
+        - the general nature of the changes (actual code vs small imports or comments)
+
+        ---
+
+        **Selecting the correct issue is essential**
+
+        Rules in mind to identify a bad issue:
+
+        - It has no description.
+        - The description is only a few lines.
+        - The associated PR changes only a few files.
+        - The issue is not closed (this is not a penalty, but closed issues are better because we can verify the solution).
+
+        **Example of a bad issue:**
+
+        https://github.com/langchain-ai/langchain-google/issues/998
+
+        **Example of a good issue:**
+
+        https://github.com/pytest-dev/pytest/issues/11538
+
+        ---
+
+        **Sometimes the issue is valid, but the model solves it too quickly.**
+
+        If the model solves the problem in only 1 or 2 steps, the issue was too easy.
+
+        In this situation, do not submit the task. Instead, restart on the same page with a different issue (and update everything) so you do not lose the work you’ve already done.
+
+        Remember: selecting an issue that is too simple results in an **automatic rejection.**
+
+        ---
+
+        ### Number of interactions
+
+        A Minimum of 3 SIGNIFICATIVE steps are **required**
+
+        If the model already solved the issue in two interactions and you send a third prompt just to clean _pycache_ or commit, then the issue will be rejected.
+
+        ---
+
+        ### Dependencies clarification:
+
+        - Pinning/freezing dependencies is important, but not critical. If your task is otherwise perfect and the only issue is dependency-related, it will still be evaluated as perfect.
+        - Always use the dependency system already used by the repository (pyproject.toml, setup.py, requirements.txt, etc.). Do not introduce a new one. If the repo uses multiple files, make sure to update all of them.
+        - If the repository has no dependency management system, you may create a requirements.txt. (modification)
+
+        ---
+
+        ### **Clarification on repositories without tests**
+
+        Just a quick note on this topic: sometimes you may encounter repositories that don't include tests. This is normal, but please be careful.
+
+        Before continuing the review, make sure the repository is actually suitable for the project (you can find more details in the guidelines).
+
+        If the repository is suitable, please remember to follow these steps:
+
+        1. Set up the Dockerfile and README.md, and ensure dependencies are properly frozen.
+
+        2. The first prompt must always include the title and description from the GitHub issue.
+
+        3. In the second prompt, you may ask the model to create the tests.
+
+        ---
+
+        ### Policy about the N/A
+
+        You may select N/A for an evaluation axis only when that axis genuinely does not apply to the turn—for example, when the model is simply committing or reusing code it previously generated.
+
+        In all other situations, N/A should not be used. If the model performed the expected work correctly, you must proceed with evaluating all axes accordingly.
+
+        This also applies to Perfect-Tie scenarios. If both models produce the exact same code and you cannot objectively distinguish one as better, you are still choosing one model as slightly better. Even when the outputs are identical, the models completed the task correctly, which means:
+
+        - There is no N/A answer
+        - There is both positive and negative feedback to provide
+
+        Proceed by evaluating all axes, selecting one model as your overall preference, and clearly describing the pros and cons of the solution based on your programming knowledge and best practices. Your overall preference must be consistent with the model you chose and with your axis-level evaluations.
+
+    # Good vs Bad: Prompts, Pros and Cons
+
+        ## Prompts
+
+        **Good** 👍
+
+        > *Fix the error class naming. You named it InvalidMIMETypeError (all-caps MIME), but the codebase convention follows the pattern InvalidMACAddressError → InvalidMimeTypeError. Rename it to InvalidMimeTypeError so it's consistent with the project's naming style. Update the reference in [validators.py](http://validators.py/) accordingly.*
+        > 
+
+        > *I prefer Model B because it delivers a complete, merge ready solution with config support and full test suite verification. Both models correctly fix the race (pending_envs, limit submissions when fail-fast is on, final_run accounts for pending_envs). Logic and correctness favor Model B, Model B also adds the core config option and ensures the entire test suite passes, including CLI option tests. Interface design favors Model B, Model B supports both --fail-fast and fail_fast = true in the [tox] section, which matches how other options like skip_missing_interpreters work. Organization and modularity favor Model B, Model B registers the option in [sets.py](http://sets.py/) and updates the two CLI test files, keeping the codebase consistent. Review and merge readiness strongly favors Model B,Model B ran all tests and fixed the exhaustive option dicts so no tests break, whereas Model A did not run the project pytest suite and left [version.py](http://version.py/) and no updates to CLI tests, so Model A would likely cause test failures on merge.*
+        > 
+
+        **Bad** 👎
+
+        > *Run all tests in every iteration*
+        > 
+
+        > *Generates error in the tests*
+        > 
+
+        ## Pros
+
+        **Good** 👍
+
+        > *Fully addressed the checker allow_empty gap. Added uppercase, mixed-case, and whitespace cases to the checker tests, TEXT/PLAIN, Application/JSON, '  text/html  ' all present. hecker and validator test parametrizations are perfectly symmetric. Inline comments are present and accurate.*
+        > 
+
+        > *Model A added per-env fail_fast support by registering the config key in runner.py, adding fail_fast to ToxEnvRunResult and run_one in single.py, and updating common.py to trigger interrupt when result.fail_fast is set and to throttle queuing when any env in pending_envs has fail_fast (using any_env_fail_fast). Model A added test_fail_fast_per_env and reported all tests pass locally. Model A correctly separated global vs per-env semantics in the interrupt condition and extended the pending_envs throttling so per-env fail_fast can prevent later envs from starting.*
+        > 
+
+        **Bad** 👎
+
+        > *The model added two new tests.*
+        > 
+
+        > *Adds numpy to setup, more comprehensive test coverage*
+        > 
+
+        > Clean import organization, deterministic hasing, good test coverage
+        > 
+
+        ## Cons
+
+        **Good** 👍
+
+        > *Model A did not explicitly demonstrate revisiting the config API usage for fail_fast (for example, ensuring no .get() usage remains if the config type does not support it). The transcript shows only [common.py](http://common.py/) and [devenv.py](http://devenv.py/) edits. If any earlier .get() usage still exists elsewhere in the codebase, that could represent a latent issue, although the full suite pass suggests exercised paths are correct.*
+        > 
+
+        > *Model B verification process was fragmented. The full suite was interrupted multiple times due to perceived hangs. It resorted to excluding certain tests (for example, test_parallel.py, parts of local_subprocess, and test_call_modes.py) and running subsets.*
+        > 
+
+        **Bad** 👎
+
+        > *imports hashlib inside the function*
+        > 
+
+        > *it does not work*
+        > 
+
+        ## Justification
+
+        **Good** 👍
+
+        > *Solution B is slightly better overall because its regex is meaningfully more correct for parameter validation, and its test coverage is broader. But it's held back by not normalizing to lowercase, which is a real functional gap.*
+        > 
+
+        > *I prefer Model A because it demonstrated stronger verification discipline and clearer merge readiness. Although both models implemented the same logical fixes in the same two files, the key differentiator is validation rigor. Model A executed the full test suite to completion without exclusions providing a clean, reproducible signal that the changes integrate correctly across the entire codebase. Model B, while methodical in identifying pre existing issues and isolating regressions, relied on segmented runs and test exclusions to reach its final result. That fragmented verification process weakens confidence in full integration stability. Model A single uninterrupted full suite pass is a stronger indicator of production readiness than multiple partial runs with exclusions.*
+        > 
+
+        **Bad** 👎
+
+        > *Model A keep imports slightly cleaner and more consistently grouped, better docs*
+        > 
+
+        > It works good
+        >
+
+Project Lead's explanation about this Task: 
+    "1
+    00:00:00,000 --> 00:00:01,620
+    and i'm still with us
+
+    2
+    00:00:02,880 --> 00:00:07,890
+    so okay we recording i'm going to introduce myself i'm really kind of predicting
+
+    3
+    00:00:07,890 --> 00:00:15,570
+    here from the writer okay and actually today we are starting to a language
+
+    4
+    00:00:15,630 --> 00:00:20,790
+    that is javascript to typescript this project it's already running for a couple of
+
+    5
+    00:00:20,790 --> 00:00:21,270
+    months
+
+    6
+    00:00:22,650 --> 00:00:28,170
+    it's important so now we are in both of these new languages
+
+    7
+    00:00:29,310 --> 00:00:32,130
+    and i'm going to share my screen here too
+
+    8
+    00:00:35,250 --> 00:00:41,340
+    to expand a little more about the brunch just let me share my school
+
+    9
+    00:00:43,920 --> 00:00:47,370
+    i'm gonna keep the other screaming here so i can see you guys in
+
+    10
+    00:00:47,370 --> 00:00:50,250
+    the shop check if you have any questions
+
+    11
+    00:00:51,655 --> 00:00:55,770
+    those the shelves okay by the end of this meeting room
+
+    12
+    00:00:56,910 --> 00:00:58,740
+    trackers on all of them okay
+
+    13
+    00:01:01,110 --> 00:01:01,800
+    um
+
+    14
+    00:01:04,140 --> 00:01:04,800
+    and
+
+    15
+    00:01:06,000 --> 00:01:09,510
+    when i started here about looking little bit about the projects so
+
+    16
+    00:01:10,710 --> 00:01:15,390
+    what is the writer okay it's ah well it's an upper level project here
+
+    17
+    00:01:15,390 --> 00:01:20,940
+    will be guiding to models to predict true writing code in your role in
+
+    18
+    00:01:20,940 --> 00:01:27,570
+    this is to work as a peer review reviewer okay so what you are
+
+    19
+    00:01:27,570 --> 00:01:30,566
+    going basically to do we're going to find a
+
+    20
+    00:01:30,720 --> 00:01:33,000
+    suitable issue too
+
+    21
+    00:01:34,230 --> 00:01:38,490
+    the solve with the model i'm going to get more details when we start
+
+    22
+    00:01:38,490 --> 00:01:41,970
+    working on the task than you'll have to pretend the codebases will have a
+
+    23
+    00:01:41,970 --> 00:01:46,050
+    few requirements than the the test should have so we can
+
+    24
+    00:01:47,310 --> 00:01:51,720
+    can review it we can pass the audio solution we can evaluate that all
+
+    25
+    00:01:51,810 --> 00:01:54,030
+    of your interactions over the model cape
+
+    26
+    00:01:55,800 --> 00:02:01,440
+    so a little a little guy that they are advising you to read this
+
+    27
+    00:02:01,440 --> 00:02:05,910
+    guideline will be available to you once the project when you're starting a project
+
+    28
+    00:02:05,970 --> 00:02:10,470
+    and every time you start the test this will be displayed
+
+    29
+    00:02:12,330 --> 00:02:18,330
+    in the highveld platform okay oh please is this you have a little summary
+
+    30
+    00:02:18,390 --> 00:02:22,410
+    of what you're going to do what is expected and what are production ready
+
+    31
+    00:02:22,470 --> 00:02:24,660
+    code means okay
+
+    32
+    00:02:25,710 --> 00:02:30,060
+    so first things first look at navigating in in this in this timeline we
+
+    33
+    00:02:30,060 --> 00:02:35,977
+    have we have this this new front page actually okay so we divide them
+
+    34
+    00:02:35,977 --> 00:02:37,380
+    a little bit information
+
+    35
+    00:02:38,700 --> 00:02:42,720
+    so to to find it gave me a file about the project you can
+
+    36
+    00:02:42,720 --> 00:02:48,973
+    navigate inside each one of these pages okay locker that michelle talked about living
+
+    37
+    00:02:48,973 --> 00:02:54,570
+    on just about a few minutes how it works how we how everything is
+
+    38
+    00:02:54,570 --> 00:02:56,430
+    defined in here so
+
+    39
+    00:02:58,920 --> 00:03:02,760
+    well the first thing you have to do when starting the task here before
+
+    40
+    00:03:02,850 --> 00:03:09,420
+    everything we have to prepare our machines to run everything that meaning okay so
+
+    41
+    00:03:10,800 --> 00:03:15,330
+    you can follow this guide here you can store the t-rex t-rex is ah
+
+    42
+    00:03:15,420 --> 00:03:21,320
+    is a terminal which lexer so you can have um many sections inside one
+
+    43
+    00:03:21,360 --> 00:03:27,961
+    verano this is good because if you don't know lost connection um something happened
+
+    44
+    00:03:27,961 --> 00:03:30,720
+    to your machine you can restart this
+
+    45
+    00:03:30,750 --> 00:03:33,720
+    session restart the same session you were working on
+
+    46
+    00:03:36,330 --> 00:03:41,100
+    and well what ha fighting me in uses the team so that's why you
+
+    47
+    00:03:41,250 --> 00:03:45,120
+    do have to astound this these days
+
+    48
+    00:03:47,190 --> 00:03:51,210
+    you have to install the vs code okay the school and probably most of
+
+    49
+    00:03:51,210 --> 00:03:57,450
+    you already used a user so some time the only thing that we need
+
+    50
+    00:03:57,690 --> 00:04:02,220
+    a that we need for you to make sure and it is the the
+
+    51
+    00:04:02,220 --> 00:04:06,480
+    vs code it's can be run inside the terminal
+
+    52
+    00:04:06,690 --> 00:04:08,940
+    using the code
+
+    53
+    00:04:10,140 --> 00:04:16,650
+    brains okay and here we has a step-by-step or have to do it if
+
+    54
+    00:04:16,650 --> 00:04:17,850
+    you don't know how okay
+
+    55
+    00:04:20,156 --> 00:04:25,410
+    again you'll have to stall at the h i fight too that's where we
+
+    56
+    00:04:25,410 --> 00:04:29,430
+    are going to do most audio work and i'm going to show you here
+
+    57
+    00:04:29,430 --> 00:04:34,470
+    how does this work we'll just have to click here to download it you
+
+    58
+    00:04:34,470 --> 00:04:36,950
+    will be redirected
+
+    59
+    00:04:38,220 --> 00:04:44,730
+    another page here you have to enter your avella experts in me brooks that's
+
+    60
+    00:04:44,760 --> 00:04:50,700
+    expert something that you must you see when a couple of loss for me
+
+    61
+    00:04:50,880 --> 00:04:53,400
+    it's my personal and only male
+
+    62
+    00:05:00,240 --> 00:05:04,800
+    i can confirm and you have to enter code and this code will be
+
+    63
+    00:05:04,800 --> 00:05:08,970
+    sent to your email okay i'm going to get it here on my other
+
+    64
+    00:05:08,970 --> 00:05:09,450
+    screen
+
+    65
+    00:05:17,700 --> 00:05:21,690
+    so guys this doesn't work on the first time just try organically
+
+    66
+    00:05:31,860 --> 00:05:36,268
+    and if the problem persists of course you can get the chance to meet
+
+    67
+    00:05:36,270 --> 00:05:39,840
+    or finish early in the in the channels so we can check this everything's
+
+    68
+    00:05:39,840 --> 00:05:40,230
+    alright
+
+    69
+    00:05:41,520 --> 00:05:47,880
+    oh yes right here you have you just selected the correct the the beach
+
+    70
+    00:05:47,880 --> 00:05:53,460
+    for your fare machine you using your network so my mind is starving as
+
+    71
+    00:05:53,460 --> 00:05:58,080
+    they use models not only income models so it's here if you have linux
+
+    72
+    00:05:58,410 --> 00:06:01,410
+    you choose the correct one here are seven info
+
+    73
+    00:06:01,440 --> 00:06:04,530
+    norm was the old and that's it
+
+    74
+    00:06:05,850 --> 00:06:11,700
+    getting back to here once you downloaded the the ha phyto you'll have to
+
+    75
+    00:06:11,700 --> 00:06:15,112
+    add it to your patch here a couple of things you can do wherever
+
+    76
+    00:06:15,112 --> 00:06:18,600
+    your cash on all the operational systems okay
+
+    77
+    00:06:20,160 --> 00:06:20,760
+    yeah
+
+    78
+    00:06:22,140 --> 00:06:27,120
+    he started to ask you to upload ha fi dash nash vs cold and
+
+    79
+    00:06:27,120 --> 00:06:31,080
+    the magic will happen you'll see what this command do in a couple of
+
+    80
+    00:06:31,080 --> 00:06:31,620
+    minutes
+
+    81
+    00:06:37,050 --> 00:06:42,840
+    so now i will start working on a task that's that's where the important
+
+    82
+    00:06:42,840 --> 00:06:44,730
+    stuff happens so
+
+    83
+    00:06:45,870 --> 00:06:50,880
+    this is our boy already environment you had everything very clear on into work
+
+    84
+    00:06:50,880 --> 00:06:56,010
+    you read the guidelines you are confident you can start working on task the
+
+    85
+    00:06:56,010 --> 00:07:03,000
+    first step is to select ah nation okay with if we have a special
+
+    86
+    00:07:03,000 --> 00:07:05,940
+    item issues on the spreadsheet so if you're working on
+
+    87
+    00:07:06,000 --> 00:07:09,810
+    python javascript and typescript you can simply click here
+
+    88
+    00:07:13,350 --> 00:07:17,940
+    that will open pre-selected issues that we said we
+
+    89
+    00:07:19,110 --> 00:07:23,700
+    we give teaching for to choose to ease a little a little bit or
+
+    90
+    00:07:23,700 --> 00:07:28,830
+    explain how how this spreadsheet work is the repo name they surely
+
+    91
+    00:07:30,180 --> 00:07:36,240
+    they should title how how many files change how the menu styles the the
+
+    92
+    00:07:36,270 --> 00:07:42,259
+    p r chains remember this is all closed issues that's why we have these
+
+    93
+    00:07:42,259 --> 00:07:48,840
+    these information here the basis age this is a very important okay why we
+
+    94
+    00:07:48,840 --> 00:07:50,160
+    have the beta as f
+
+    95
+    00:07:50,310 --> 00:07:57,450
+    change ah is for us to put the git history with
+
+    96
+    00:07:59,070 --> 00:08:05,700
+    on the on the moment before the issue was solved gay because these are
+
+    97
+    00:08:05,760 --> 00:08:11,070
+    own issues some issues are from two thousand and eighteen so that's why we
+
+    98
+    00:08:11,070 --> 00:08:16,650
+    have this issue select issue many select an initial that you can i'll talk
+
+    99
+    00:08:16,650 --> 00:08:18,600
+    to you and talk about it or
+
+    100
+    00:08:18,720 --> 00:08:20,010
+    in in the sequence
+
+    101
+    00:08:21,156 --> 00:08:25,200
+    don't have to get the basis of age we have also a link on
+
+    102
+    00:08:25,200 --> 00:08:26,580
+    how you have to lose
+
+    103
+    00:08:28,140 --> 00:08:32,190
+    we have a couple of information and i have this column here that tells
+
+    104
+    00:08:32,190 --> 00:08:37,080
+    you if a relation is taken or not okay and we get mapped out
+
+    105
+    00:08:37,140 --> 00:08:41,340
+    our get back to this once we start the task on our platform and
+
+    106
+    00:08:41,340 --> 00:08:43,530
+    you understand why this is exist
+
+    107
+    00:08:45,450 --> 00:08:51,840
+    okay so it's basically so when you go here sell admonition see if the
+
+    108
+    00:08:51,840 --> 00:08:52,470
+    issues
+
+    109
+    00:08:55,290 --> 00:08:58,650
+    and feed the requirements that we have you can see here we have a
+
+    110
+    00:08:58,650 --> 00:09:03,630
+    little requirements of a lot of good issues about so one on this true
+
+    111
+    00:09:03,630 --> 00:09:13,140
+    language less people with less than two hundred megabytes and just more understandable enough
+
+    112
+    00:09:13,740 --> 00:09:16,260
+    while that project is about okay
+
+    113
+    00:09:17,580 --> 00:09:20,700
+    it wasn't english always best
+
+    114
+    00:09:21,960 --> 00:09:26,160
+    most of tests gate sometimes we we have um
+
+    115
+    00:09:27,720 --> 00:09:31,980
+    because that don't have passed but then we expect the model to create those
+
+    116
+    00:09:31,980 --> 00:09:37,380
+    tests on the on the robo first the test okay because remember
+
+    117
+    00:09:38,520 --> 00:09:45,060
+    evaluating the models as we are peer reviewers you're expecting the models to work
+
+    118
+    00:09:45,420 --> 00:09:51,120
+    as a senior software engineer and tasks are expected by seniors of the ninja
+
+    119
+    00:09:51,210 --> 00:09:52,950
+    so that's why it's important
+
+    120
+    00:09:54,780 --> 00:09:59,280
+    so we can see what is a good issue is about this is very
+
+    121
+    00:09:59,280 --> 00:10:04,620
+    important if a model can solomon a surely one or two interactions we consider
+
+    122
+    00:10:04,620 --> 00:10:07,860
+    it too easy and you can choose another from the platform
+
+    123
+    00:10:09,883 --> 00:10:15,613
+    one thing about this spreadsheet is that it can have false positives so it
+
+    124
+    00:10:15,613 --> 00:10:21,913
+    may have false and easy issues here issues that are not in english okay
+
+    125
+    00:10:22,633 --> 00:10:25,423
+    we are working obviously improving the spreadsheet but
+
+    126
+    00:10:26,923 --> 00:10:31,483
+    also buzzes may happen so it's important for me to check everything before you
+
+    127
+    00:10:31,483 --> 00:10:33,553
+    start your custom game
+
+    128
+    00:10:35,113 --> 00:10:40,453
+    select norwegian if you want we have here a cup on a link that
+
+    129
+    00:10:40,483 --> 00:10:41,233
+    can help me
+
+    130
+    00:10:44,083 --> 00:10:46,393
+    and you have an issue definition that you can follow
+
+    131
+    00:10:49,423 --> 00:10:55,393
+    so now start the prepare nicole bass before the sun i already have an
+
+    132
+    00:10:55,393 --> 00:10:55,963
+    issue here
+
+    133
+    00:10:57,853 --> 00:11:00,163
+    we'll show tonight the show i chose
+
+    134
+    00:11:04,993 --> 00:11:09,433
+    so one issue that i'm going to to show you how to start here
+
+    135
+    00:11:10,783 --> 00:11:15,703
+    ah basically i already read this i know what when the project is about
+
+    136
+    00:11:15,703 --> 00:11:20,953
+    and what's asking all they want is to fix the connection between target and
+
+    137
+    00:11:20,953 --> 00:11:25,543
+    source here on this diagram is is the president of the diamond js okay
+
+    138
+    00:11:25,603 --> 00:11:29,893
+    so two january dominant vibrance so
+
+    139
+    00:11:31,453 --> 00:11:32,983
+    designation great
+
+    140
+    00:11:34,033 --> 00:11:37,423
+    selected now i'm going here to my
+
+    141
+    00:11:40,213 --> 00:11:42,493
+    no they haven't platform once allow me
+
+    142
+    00:11:43,603 --> 00:11:44,083
+    we'll see
+
+    143
+    00:11:45,313 --> 00:11:48,733
+    one line here there will be this pierre writer attempt okay
+
+    144
+    00:11:50,773 --> 00:11:51,733
+    can just click here
+
+    145
+    00:11:53,863 --> 00:11:58,573
+    and he just like a task here is what we will be loading the
+
+    146
+    00:11:58,603 --> 00:12:02,473
+    guidelines here's not loading because i'm on my guests
+
+    147
+    00:12:03,583 --> 00:12:09,733
+    profile my chrome and the connection speed improvement somehow but i tested in production
+
+    148
+    00:12:09,733 --> 00:12:12,643
+    with my normal code and everything is working fine
+
+    149
+    00:12:13,843 --> 00:12:17,923
+    i make the whole review process for another payment info
+
+    150
+    00:12:20,203 --> 00:12:26,323
+    and we can start our tasks it's very important that you enable your location
+
+    151
+    00:12:26,383 --> 00:12:26,803
+    okay
+
+    152
+    00:12:34,483 --> 00:12:35,773
+    and then we'll start again
+
+    153
+    00:12:44,113 --> 00:12:45,463
+    so who will mean
+
+    154
+    00:12:47,743 --> 00:12:53,263
+    okay so first of all here are things over here you always have the
+
+    155
+    00:12:53,263 --> 00:12:57,943
+    guidelines inside here as you can see you have a kid your destructions the
+
+    156
+    00:12:57,943 --> 00:13:01,873
+    same page show you two guys you have a link the link for this
+
+    157
+    00:13:01,903 --> 00:13:04,573
+    for this page and
+
+    158
+    00:13:06,223 --> 00:13:10,093
+    it will be available to you also in a tablet on the slack channels
+
+    159
+    00:13:10,093 --> 00:13:16,063
+    and the useful links everything that is important the pages are there so check
+
+    160
+    00:13:16,063 --> 00:13:16,393
+    it out
+
+    161
+    00:13:20,173 --> 00:13:25,723
+    so yeah guess i'm going to update the guidelines for nomor yang yes
+
+    162
+    00:13:28,676 --> 00:13:35,683
+    here's where you start in the issue what's the important thing on this stack
+
+    163
+    00:13:36,793 --> 00:13:40,183
+    remember that i told you the pre selected sheets and you have had that
+
+    164
+    00:13:40,273 --> 00:13:44,773
+    taken issue okay once you select an issue from the spreadsheet
+
+    165
+    00:13:46,573 --> 00:13:47,113
+    we're here
+
+    166
+    00:13:48,973 --> 00:13:51,103
+    face the repo a
+
+    167
+    00:13:53,623 --> 00:13:58,963
+    select the language you are working in this case javascript don't mind his message
+
+    168
+    00:13:58,963 --> 00:14:05,053
+    for now this will be updated after this morning you can select javascript you
+
+    169
+    00:14:05,083 --> 00:14:12,403
+    can select an issue recommended the issue and then you based your issue yourself
+
+    170
+    00:14:12,403 --> 00:14:12,823
+    elected
+
+    171
+    00:14:14,263 --> 00:14:21,043
+    here okay and then you submit these to get to the and understand we
+
+    172
+    00:14:21,043 --> 00:14:26,893
+    are still going to be musician here in the stack you will guarantee that
+
+    173
+    00:14:26,923 --> 00:14:32,023
+    this issue it's yours alone no one else will be able to work on
+
+    174
+    00:14:32,023 --> 00:14:34,003
+    position so that's why the step
+
+    175
+    00:14:34,243 --> 00:14:39,643
+    is very important once a celebration even if you don't know is a complex
+
+    176
+    00:14:39,643 --> 00:14:45,403
+    issue or an easy issue you're not entirely familiar you for you to don't
+
+    177
+    00:14:45,913 --> 00:14:50,533
+    lose our time understanding the project or the issue go here
+
+    178
+    00:14:52,933 --> 00:14:57,973
+    and submit your answers okay if by any means you have to change it
+
+    179
+    00:14:58,123 --> 00:15:03,216
+    you can eat your responses just come here and if your responses and seeing
+
+    180
+    00:15:03,216 --> 00:15:03,703
+    it again
+
+    181
+    00:15:05,203 --> 00:15:06,493
+    just remember to do this
+
+    182
+    00:15:08,173 --> 00:15:13,483
+    we start to preparing our colleagues i'm going to go here to back to
+
+    183
+    00:15:13,483 --> 00:15:19,843
+    the our guidelines so first we have to manually to locally grown or repo
+
+    184
+    00:15:19,993 --> 00:15:22,723
+    i've already done that and i'm going to do this okay
+
+    185
+    00:15:24,163 --> 00:15:25,873
+    i already come to be the same age
+
+    186
+    00:15:28,633 --> 00:15:32,653
+    and we are going to do likeness i'm going to get to here
+
+    187
+    00:15:34,483 --> 00:15:35,113
+    ammo
+
+    188
+    00:15:36,763 --> 00:15:40,123
+    objects rider morning
+
+    189
+    00:15:43,153 --> 00:15:43,903
+    transcript
+
+    190
+    00:15:46,033 --> 00:15:47,293
+    diagram genius
+
+    191
+    00:15:50,743 --> 00:15:51,043
+    so
+
+    192
+    00:15:52,723 --> 00:15:58,753
+    okay guys here i had already prepared here my my
+
+    193
+    00:16:01,063 --> 00:16:06,103
+    and my talk on the vs code so i can start preparing my colleague
+
+    194
+    00:16:06,163 --> 00:16:11,293
+    so what we're having partner here to to have to shit first things first
+
+    195
+    00:16:11,713 --> 00:16:15,793
+    we have to check out the business image so i'm going to go here
+
+    196
+    00:16:17,593 --> 00:16:18,583
+    need checkout
+
+    197
+    00:16:22,123 --> 00:16:23,863
+    i'm going to get my business and age
+
+    198
+    00:16:28,633 --> 00:16:32,893
+    okay now i know that you had you can check here and get love
+
+    199
+    00:16:33,193 --> 00:16:36,163
+    it he said my hat is these these fremont
+
+    200
+    00:16:37,603 --> 00:16:41,473
+    and in two thousand and eighteen so pershing
+
+    201
+    00:16:43,933 --> 00:16:46,873
+    know what we have to do is the initial setup
+
+    202
+    00:16:47,923 --> 00:16:54,943
+    we expect all asks that started must have the initial setup comment first okay
+
+    203
+    00:16:55,603 --> 00:17:00,373
+    so guess what we have to do first we'll have to anonymize all the
+
+    204
+    00:17:00,373 --> 00:17:03,853
+    commits we do on these ones
+
+    205
+    00:17:04,423 --> 00:17:09,643
+    ask gay so just copy and paste here so you can have it realized
+
+    206
+    00:17:12,733 --> 00:17:17,683
+    and they have to do a couple of things were happening in the read
+
+    207
+    00:17:17,683 --> 00:17:23,173
+    me if the project doesn't have one you can update today with me from
+
+    208
+    00:17:23,173 --> 00:17:28,273
+    the from the if the if the repo already has one okay it simple
+
+    209
+    00:17:28,273 --> 00:17:30,883
+    instructions that i'll show you to you on how to run
+
+    210
+    00:17:30,883 --> 00:17:34,603
+    the tests when the tendency they have it's quite simple
+
+    211
+    00:17:36,253 --> 00:17:40,933
+    i'll have to provide a working dock docking file docker file okay this is
+
+    212
+    00:17:41,323 --> 00:17:48,223
+    useful for us to test all of your solution okay this isn't jerry importance
+
+    213
+    00:17:48,493 --> 00:17:54,103
+    than to provide a working darko file okay photography file from a task is
+
+    214
+    00:17:54,130 --> 00:17:55,723
+    not working by any means
+
+    215
+    00:17:55,843 --> 00:17:59,053
+    your tasks can't your test can be rejected okay
+
+    216
+    00:18:00,733 --> 00:18:04,933
+    you have to be in the tendencies everyone venue like fios and of course
+
+    217
+    00:18:05,113 --> 00:18:08,023
+    test is if everything is wrong so
+
+    218
+    00:18:09,043 --> 00:18:14,233
+    let's start with the relay so this project already has written me here take
+
+    219
+    00:18:15,643 --> 00:18:16,483
+    i can simply
+
+    220
+    00:18:17,713 --> 00:18:19,273
+    come here and
+
+    221
+    00:18:20,563 --> 00:18:26,113
+    and then you read me okay you can nash national action if you want
+
+    222
+    00:18:26,113 --> 00:18:29,593
+    you can also do everything like this
+
+    223
+    00:18:30,883 --> 00:18:36,193
+    but i like to keep it simple i just add these basically telling me
+
+    224
+    00:18:36,193 --> 00:18:40,573
+    how to run locally ensure sure that in this case node sixty two
+
+    225
+    00:18:41,743 --> 00:18:45,913
+    it's running this is how i installed the dependencies this is how they were
+
+    226
+    00:18:45,913 --> 00:18:47,143
+    made tests okay
+
+    227
+    00:18:49,573 --> 00:18:53,623
+    so my next step and can see here is a working docker file
+
+    228
+    00:18:56,173 --> 00:19:02,143
+    we have a library here jet you can use it if you if maybe
+
+    229
+    00:19:02,293 --> 00:19:07,093
+    it is here the diagram js let's see if there's something or
+
+    230
+    00:19:09,493 --> 00:19:10,423
+    i don't think
+
+    231
+    00:19:12,343 --> 00:19:17,683
+    that we have says this is the new don't know about this lot of
+
+    232
+    00:19:17,683 --> 00:19:23,413
+    problem you can't change your euro
+
+    237
+    00:19:45,673 --> 00:19:48,313
+    if you are endowed when news
+
+
+    239
+    00:19:55,033 --> 00:19:59,893
+    we allow the use of ai is to create a docker file so if
+
+    240
+    00:19:59,893 --> 00:20:04,363
+    you don't know how to create the dockerfile the dockerfile isn't learning you can
+
+    241
+    00:20:04,513 --> 00:20:06,853
+    use ai to fix it everything okay
+
+    242
+    00:20:08,383 --> 00:20:11,383
+    so that's great here my docker file
+
+    243
+    00:20:14,471 --> 00:20:16,151
+    i already haven't a perfect year
+
+    244
+    00:20:19,211 --> 00:20:27,131
+    in basic p uses a very basic profile um we tried to make me
+
+    245
+    00:20:27,131 --> 00:20:33,011
+    advise people to do the simpler the better so you can be the most
+
+    246
+    00:20:33,011 --> 00:20:37,541
+    single docker file that you have that run on the task inside the repo
+
+    247
+    00:20:37,541 --> 00:20:41,951
+    okay but we know that sometimes some projects are complex enough that they have
+
+    248
+    00:20:42,281 --> 00:20:43,091
+    complicated
+
+    249
+    00:20:44,741 --> 00:20:49,901
+    or fire like this one uses chromium because well it's ah it's embedded on
+
+    250
+    00:20:49,901 --> 00:20:51,551
+    a wide web web page
+
+    251
+    00:20:52,661 --> 00:20:57,611
+    okay so basically what is this is what you have to update how to
+
+    252
+    00:20:57,611 --> 00:21:04,691
+    install dependencies if you have to obtain any changes and ultimately the last command
+
+    253
+    00:21:04,781 --> 00:21:06,551
+    is out around the tests okay
+
+    254
+    00:21:09,101 --> 00:21:09,701
+    and then
+
+    255
+    00:21:11,081 --> 00:21:18,191
+    to check run docker okay if everything is working let us use this everything's
+
+    256
+    00:21:18,191 --> 00:21:18,701
+    okay
+
+    257
+    00:21:23,381 --> 00:21:27,217
+    just to check it if you start taking too long i'm going to close
+
+    258
+    00:21:27,221 --> 00:21:29,801
+    it because we have a limited amount of time here
+
+    259
+    00:21:30,870 --> 00:21:36,011
+    that much you wish to do every time you start a past the initial
+
+    260
+    00:21:36,011 --> 00:21:38,831
+    setup and between interactions
+
+    261
+    00:21:40,721 --> 00:21:46,121
+    um everything and making directions the model you will be asked to evaluate what
+
+    262
+    00:21:46,211 --> 00:21:47,081
+    one model did
+
+    263
+    00:21:48,101 --> 00:21:54,581
+    good what one mother the bad and choose a preference okay don't take the
+
+    264
+    00:21:54,581 --> 00:22:02,621
+    word of the models for certainty check that test run the docker file every
+
+    265
+    00:22:02,741 --> 00:22:08,261
+    time after interaction to check the test is running especially in your last interv
+
+    266
+    00:22:08,291 --> 00:22:08,651
+    action
+
+    267
+    00:22:09,821 --> 00:22:13,241
+    and talking about interaction via the docker runs
+
+    268
+    00:22:14,711 --> 00:22:20,801
+    we have a minimum of two interactions and a maximum of six interaction so
+
+    269
+    00:22:21,191 --> 00:22:28,151
+    if i'm also the initial wanting to make reconsider it easy nation okay then
+
+    270
+    00:22:28,151 --> 00:22:28,991
+    you have to start it
+
+    271
+    00:22:30,251 --> 00:22:37,391
+    if the model takes more than six interactions to solve the issue it's not
+
+    272
+    00:22:37,391 --> 00:22:41,561
+    a problem since the model we are training the models the models can fill
+
+    273
+    00:22:42,071 --> 00:22:48,101
+    in councillor mature task and as the model to over six interactions on the
+
+    274
+    00:22:48,131 --> 00:22:50,261
+    issues i would oh sure
+
+    275
+    00:22:50,261 --> 00:22:53,231
+    oh you more details when it's submitted to say so
+
+    276
+    00:22:54,341 --> 00:22:59,051
+    as you can see my dockerfile is running it's not something that you hear
+
+    277
+    00:23:02,051 --> 00:23:08,071
+    okay but you get the point ah does the level boarding everything goes around
+
+    278
+    00:23:08,141 --> 00:23:08,891
+    latin like
+
+    279
+    00:23:11,141 --> 00:23:17,801
+    my main color our docker file now getting back to our guidelines
+
+    280
+    00:23:18,881 --> 00:23:20,381
+    we have to paint the palaces
+
+    281
+    00:23:23,351 --> 00:23:29,681
+    eric just go here in this case and we find our dependencies basically
+
+    282
+    00:23:31,811 --> 00:23:35,261
+    in this case you just select and keep
+
+    283
+    00:23:39,281 --> 00:23:45,701
+    that these dependents and the minimal dependencies on the projects okay you have to
+
+    284
+    00:23:45,701 --> 00:23:48,251
+    do this in every other ah
+
+    285
+    00:23:50,411 --> 00:23:52,001
+    package management that you have
+
+    286
+    00:23:53,501 --> 00:23:57,792
+    there's only the packaging that jason so i think is not an issue much
+
+    287
+    00:23:57,792 --> 00:24:04,211
+    as have other other files too with libraries please pin them to okay continues
+
+    288
+    00:24:04,211 --> 00:24:09,161
+    because in python sometimes you have like requirements requirement pacifying involves we have a
+
+    289
+    00:24:09,161 --> 00:24:10,031
+    lot of things so
+
+    290
+    00:24:11,639 --> 00:24:16,511
+    all the dependencies you have an effect jason you can delete the file
+
+    291
+    00:24:20,171 --> 00:24:20,411
+    a
+
+    292
+    00:24:23,444 --> 00:24:26,201
+    be run everything if it's working okay
+
+    293
+    00:24:28,241 --> 00:24:33,041
+    i run everything i made sure that everything is working one thing that is
+
+    294
+    00:24:33,041 --> 00:24:36,341
+    important to do here come those back here to the
+
+    295
+    00:24:38,441 --> 00:24:40,481
+    based in the docker file that you are using
+
+    296
+    00:24:42,761 --> 00:24:45,011
+    you cannot domain here is just
+
+    297
+    00:24:51,731 --> 00:24:52,931
+    their motion reporting
+
+    298
+    00:24:54,611 --> 00:25:00,071
+    now we need to add here the commit hash of our initial setup then
+
+    299
+    00:25:00,082 --> 00:25:04,061
+    i want to do so you have to meet ed everything that you just
+
+    300
+    00:25:04,121 --> 00:25:04,391
+    did
+
+    301
+    00:25:07,421 --> 00:25:13,870
+    within a couple of things to commit and we go here midlands and we
+
+    302
+    00:25:13,870 --> 00:25:14,111
+    have
+
+    303
+    00:25:15,941 --> 00:25:17,081
+    the comments year
+
+    304
+    00:25:18,671 --> 00:25:19,871
+    you can use this command
+
+    305
+    00:25:23,711 --> 00:25:28,721
+    right now i can see that we have the initial setup initial structures here
+
+    306
+    00:25:29,051 --> 00:25:31,644
+    everything is as expected
+
+    307
+    00:25:33,161 --> 00:25:33,401
+    so
+
+    308
+    00:25:35,381 --> 00:25:37,871
+    i'm going to go here nick
+
+    309
+    00:25:39,371 --> 00:25:40,031
+    each log
+
+    310
+    00:25:42,191 --> 00:25:44,861
+    we're going to get my initial setup needs
+
+    311
+    00:25:46,361 --> 00:25:51,341
+    please change this i'm going to save here on another x file that i
+
+    312
+    00:25:51,341 --> 00:25:51,611
+    have
+
+    313
+    00:25:53,321 --> 00:25:59,651
+    days just only cash is important because in not only have to add this
+
+    314
+    00:25:59,801 --> 00:26:01,421
+    on our platform
+
+    315
+    00:26:03,641 --> 00:26:08,261
+    but you have to use it on the club ha fi when we started
+
+    316
+    00:26:08,351 --> 00:26:09,131
+    using it
+
+    317
+    00:26:10,601 --> 00:26:10,811
+    oh
+
+    318
+    00:26:13,481 --> 00:26:17,141
+    we pretend the tools we select an issue we prepare codebase we made the
+
+    319
+    00:26:17,231 --> 00:26:18,641
+    our first
+
+    320
+    00:26:19,811 --> 00:26:26,501
+    comment we have everything prepare to start our pets so what we have to
+
+    321
+    00:26:26,501 --> 00:26:26,981
+    do now
+
+    322
+    00:26:29,711 --> 00:26:34,931
+    this when we started interaction of the model so again here is a orange
+
+    323
+    00:26:35,711 --> 00:26:36,011
+    alert
+
+    324
+    00:26:37,301 --> 00:26:42,011
+    a warning about the ai use case where you can use and you cannot
+
+    325
+    00:26:42,041 --> 00:26:49,301
+    use these is super important okay your task may not only be rejected but
+
+    326
+    00:26:49,301 --> 00:26:54,041
+    you may be suspended so this is very important i cannot stress this enough
+
+    327
+    00:26:54,431 --> 00:26:56,801
+    so please follow these
+
+    328
+    00:26:58,871 --> 00:27:04,901
+    so once we have everything setup we can start interacting with the model to
+
+    329
+    00:27:04,931 --> 00:27:09,941
+    the age i find too that is commentary okay the sci fi is human
+
+    330
+    00:27:09,986 --> 00:27:11,381
+    feedback interface
+
+    331
+    00:27:13,451 --> 00:27:18,911
+    okay was a team extension okay for you to to run like if you
+
+    332
+    00:27:18,911 --> 00:27:21,131
+    have any plumbers you can continue to eat
+
+    333
+    00:27:23,111 --> 00:27:26,381
+    i'm going to show them guys just like phoenix
+
+    334
+    00:27:28,001 --> 00:27:29,951
+    that he looks at new ex
+
+    335
+    00:27:31,361 --> 00:27:31,691
+    you
+
+    336
+    00:27:32,749 --> 00:27:33,761
+    it's ask
+
+    337
+    00:27:35,261 --> 00:27:36,731
+    i'm going to start for the teams
+
+    338
+    00:27:38,578 --> 00:27:40,991
+    sure the won't
+
+    339
+    00:27:41,381 --> 00:27:47,531
+    it may happens in ie it cannot screw color or at least sometimes so
+
+    340
+    00:27:48,071 --> 00:27:52,781
+    when you are setting up your environment we have a few commands that can
+
+    341
+    00:27:52,841 --> 00:27:53,321
+    do that
+
+    342
+    00:27:55,931 --> 00:27:59,741
+    we have we are going to start interaction with the model we are going
+
+    343
+    00:27:59,741 --> 00:28:01,721
+    to use our command
+
+    344
+    00:28:02,981 --> 00:28:06,851
+    while ha fai dash dash vs code and you'll see
+
+    345
+    00:28:14,801 --> 00:28:18,971
+    you saw that my screen goes to inside and another because he tried to
+
+    346
+    00:28:18,971 --> 00:28:25,571
+    log me in on the oncoming traffic interface as i had already downloaded the
+
+    347
+    00:28:25,751 --> 00:28:31,691
+    ha i was already logging so indiana asked me for any just allow me
+
+    348
+    00:28:31,691 --> 00:28:32,291
+    to continue
+
+    349
+    00:28:33,911 --> 00:28:38,891
+    if you're not plugged in and just follow the same steps which are email
+
+    350
+    00:28:38,921 --> 00:28:42,431
+    than the the the code that you receive
+
+    351
+    00:28:43,991 --> 00:28:49,031
+    base it on the web page and the webpage will give you another number
+
+    352
+    00:28:49,391 --> 00:28:51,941
+    that you can base it on the journal
+
+    353
+    00:28:53,231 --> 00:28:59,381
+    so as you can see it open to via schools for me a and
+
+    354
+    00:28:59,381 --> 00:29:06,251
+    b this is where our models will start working anyone just to
+
+    355
+    00:29:07,301 --> 00:29:11,861
+    resize the windows for us to see everything's happening
+
+    356
+    00:29:17,531 --> 00:29:18,761
+    you can keep your cool
+
+    357
+    00:29:21,281 --> 00:29:22,721
+    let's open the terminal
+
+    358
+    00:29:23,951 --> 00:29:24,431
+    yeah
+
+    359
+    00:29:26,681 --> 00:29:27,071
+    so
+
+    360
+    00:29:29,201 --> 00:29:33,731
+    now ready to start interactive the model we have a little more couple of
+
+    361
+    00:29:33,731 --> 00:29:38,801
+    things that we have to connect the main terminal of school ha five to
+
+    362
+    00:29:38,831 --> 00:29:43,841
+    both of the vehicle we have so you're going to attach the session here
+
+    363
+    00:29:44,351 --> 00:29:44,771
+    just
+
+    364
+    00:29:47,171 --> 00:29:48,761
+    copied his mouth his number
+
+    365
+    00:29:49,991 --> 00:29:50,711
+    just the words
+
+    366
+    00:29:52,031 --> 00:29:52,571
+    it's not
+
+    367
+    00:29:54,251 --> 00:29:58,840
+    it's not enable my copy and paste on the team external mentor restarting on
+
+    368
+    00:29:58,840 --> 00:29:59,771
+    the base terminal
+
+    369
+    00:30:03,461 --> 00:30:03,971
+    i'm sorry
+
+    370
+    00:30:10,661 --> 00:30:13,691
+    welcoming just restarting here will fix this later
+
+    371
+    00:30:25,228 --> 00:30:25,888
+    yeah now to go
+
+    372
+    00:30:34,588 --> 00:30:39,118
+    so i'm going to attach sexually which social media p
+
+    373
+    00:30:40,648 --> 00:30:41,878
+    we must be
+
+    374
+    00:30:43,948 --> 00:30:50,758
+    that's rather important information on this terminal that is this code here
+
+    375
+    00:30:52,108 --> 00:30:58,436
+    this is your special id or your entropic id you have to put in
+
+    376
+    00:30:58,436 --> 00:31:05,398
+    this on our platform like this okay and saturday another fire and funerals are
+
+    377
+    00:31:05,398 --> 00:31:07,198
+    not for you to lose it
+
+    378
+    00:31:08,638 --> 00:31:14,488
+    this is very important because it's with this new id that we receive all
+
+    379
+    00:31:14,488 --> 00:31:20,338
+    your interactions from a trumpet that we can review okay so never forget to
+
+    380
+    00:31:20,338 --> 00:31:23,818
+    put this on the on the little platform please
+
+    381
+    00:31:24,958 --> 00:31:29,278
+    if anything happens and you lost your session and have to start again you
+
+    382
+    00:31:29,308 --> 00:31:33,328
+    can start a new tropic session
+
+    383
+    00:31:34,528 --> 00:31:37,948
+    inside the same code that you are already using and you can base it
+
+    384
+    00:31:37,948 --> 00:31:43,078
+    here okay and then will have the continuation even though it's another sanction we
+
+    385
+    00:31:43,078 --> 00:31:47,758
+    can understand that you started on on this one and then you went on
+
+    386
+    00:31:47,788 --> 00:31:49,648
+    these one that there is not a problem
+
+    387
+    00:31:52,348 --> 00:31:56,278
+    for a year i save every nano text file and i will have to
+
+    388
+    00:31:56,278 --> 00:31:59,518
+    enter the interfaith theory you're starting working on
+
+    389
+    00:32:01,288 --> 00:32:08,488
+    yeah we have power everything that idea is reading here in our last interface
+
+    390
+    00:32:08,518 --> 00:32:11,308
+    code is this one cc ejected coding
+
+    391
+    00:32:13,498 --> 00:32:14,548
+    and stuff here
+
+    392
+    00:32:16,258 --> 00:32:21,268
+    and he asked me for three little questions about the people that are losing
+
+    393
+    00:32:21,808 --> 00:32:24,058
+    so we're going to get here
+
+    394
+    00:32:26,788 --> 00:32:28,078
+    but i need people
+
+    395
+    00:32:29,908 --> 00:32:33,178
+    if i'm using the issue
+
+    396
+    00:32:39,598 --> 00:32:44,188
+    and the last one is the initial setup of the same common patch that
+
+    397
+    00:32:44,188 --> 00:32:47,278
+    you put on revelle platform on
+
+    398
+    00:32:49,288 --> 00:32:49,678
+    sorry
+
+    399
+    00:32:51,778 --> 00:32:53,548
+    ah developer upfront
+
+    400
+    00:32:57,538 --> 00:32:57,988
+    here
+
+    401
+    00:32:59,578 --> 00:33:04,228
+    in return the codebase you'll have to paste it here okay this is important
+
+    402
+    00:33:05,248 --> 00:33:06,178
+    and second crunchy
+
+    403
+    00:33:07,648 --> 00:33:11,908
+    when are ready to make our first model interaction okay
+
+    404
+    00:33:13,558 --> 00:33:17,638
+    so now we have to guide the model to solve the issue i understand
+
+    405
+    00:33:17,758 --> 00:33:21,238
+    what this is about my first interaction
+
+    406
+    00:33:22,618 --> 00:33:28,198
+    is a couple things you have to know we ask you not to simply
+
+    407
+    00:33:28,318 --> 00:33:33,388
+    copy and paste the description of the issue we'll write it in your own
+
+    408
+    00:33:33,388 --> 00:33:38,428
+    words okay that can be a lot of words can be many a few
+
+    409
+    00:33:38,428 --> 00:33:42,448
+    words i'm going to show the example or indeed we do not allow
+
+    410
+    00:33:42,448 --> 00:33:48,178
+    allow any links or image okay that might have on the description so please
+
+    411
+    00:33:48,478 --> 00:33:55,018
+    remove them right ah if you have links and the links may have contrast
+
+    412
+    00:33:55,048 --> 00:33:59,848
+    to the issue you can rewrite them in your own words the important thing
+
+    413
+    00:33:59,878 --> 00:34:02,608
+    is right in normal form
+
+    414
+    00:34:02,608 --> 00:34:07,258
+    i'm like a human you do like you were talking to another peer about
+
+    415
+    00:34:07,288 --> 00:34:09,178
+    an issue you have to solve it okay
+
+    416
+    00:34:10,708 --> 00:34:16,738
+    so as you can see this is basically my description of what is the
+
+    417
+    00:34:16,768 --> 00:34:23,428
+    problem this what the solution would like i simply took everything and
+
+    418
+    00:34:27,178 --> 00:34:28,378
+    simplified to this
+
+    419
+    00:34:29,518 --> 00:34:35,668
+    implementing source code target swapping when reconnecting the components
+
+    420
+    00:34:36,688 --> 00:34:38,278
+    you don't have to be very specific
+
+    421
+    00:34:39,598 --> 00:34:44,488
+    the models can take a little the mothers may have asking questions when they
+
+    422
+    00:34:44,488 --> 00:34:45,508
+    are thinking okay
+
+    423
+    00:34:47,218 --> 00:34:54,628
+    ah so for now we're going one less step now we are prepared everything
+
+    424
+    00:34:54,658 --> 00:34:59,308
+    we are going to do for for sprout and the models can take up
+
+    425
+    00:34:59,308 --> 00:35:01,078
+    to five fifteen minutes
+
+    426
+    00:35:02,128 --> 00:35:08,878
+    half an hour depends on the complexity of what you're asking okay so everytime
+
+    427
+    00:35:09,328 --> 00:35:12,718
+    you can see the models start working okay
+
+    428
+    00:35:14,488 --> 00:35:20,758
+    and everytime the models are thinking you go here and pause your task on
+
+    429
+    00:35:20,758 --> 00:35:25,888
+    the developed platform why this is important because actually we are not doing any
+
+    430
+    00:35:25,888 --> 00:35:32,158
+    work he can just waiting for the models to complete the iran to solve
+
+    431
+    00:35:32,368 --> 00:35:33,598
+    what you ask for them
+
+    432
+    00:35:34,528 --> 00:35:43,076
+    and yet you pause your task and wait for the models to complete and
+
+    433
+    00:35:43,076 --> 00:35:46,858
+    you can do it anything else you like okay you don't have to to
+
+    434
+    00:35:46,888 --> 00:35:54,058
+    keep sierra container but it's very important for you to pause the
+
+    435
+    00:35:54,208 --> 00:35:58,648
+    yes okay we understand that it's impossible for tests to have zero pause time
+
+    436
+    00:36:04,378 --> 00:36:08,038
+    in my the models are thinking oh i'll see if i have any questions
+
+    437
+    00:36:08,038 --> 00:36:08,368
+    here
+
+    438
+    00:36:10,108 --> 00:36:15,448
+    the ask could you repeat the art again with the amount of interactions they
+
+    439
+    00:36:15,448 --> 00:36:22,078
+    expect amenable of three to six interactions okay because up to two we consider
+
+    440
+    00:36:22,228 --> 00:36:28,078
+    ah aviation you have to choose another word so the minimum history and the
+
+    441
+    00:36:28,078 --> 00:36:29,728
+    maximum is six
+
+    442
+    00:36:31,549 --> 00:36:36,268
+    because if you pass six interactions you can submit these as an option that
+
+    443
+    00:36:36,268 --> 00:36:41,668
+    will show you two new guys than the model can over six seats interactions
+
+    444
+    00:36:41,668 --> 00:36:42,418
+    to some much
+
+    445
+    00:36:46,408 --> 00:36:53,278
+    ah what important things sometimes the model precious we get four hundred dollars five
+
+    446
+    00:36:53,278 --> 00:36:59,068
+    hundred errors and and errors in may remain work
+
+    447
+    00:37:00,358 --> 00:37:05,458
+    he may hang abruptly well it's a program we know how this works sometimes
+
+    448
+    00:37:05,848 --> 00:37:06,718
+    bugs happens
+
+    449
+    00:37:07,948 --> 00:37:14,518
+    cause everything you have when you you can do controversy conspiracy to stock the
+
+    450
+    00:37:14,548 --> 00:37:20,938
+    kobe che fai and your counselor be meat as internal error okay if chemical
+
+    451
+    00:37:20,938 --> 00:37:27,208
+    chain or testing in cancer rheumatism turnover because these things happens remember always to
+
+    452
+    00:37:27,208 --> 00:37:28,048
+    take this screenshot
+
+    453
+    00:37:28,048 --> 00:37:34,168
+    shot of the error there happens if possible with deacon time okay rather than
+
+    454
+    00:37:34,588 --> 00:37:40,618
+    most information that you can whereas that we can evaluate correctly that indeed was
+
+    455
+    00:37:40,888 --> 00:37:42,808
+    an error that occurred okay
+
+    456
+    00:37:45,508 --> 00:37:50,578
+    so the models here are still thinking motto be it's making a lot of
+
+    457
+    00:37:50,728 --> 00:37:55,678
+    changes while the way is to still taking on how to do it
+
+    458
+    00:38:02,308 --> 00:38:06,118
+    come on ask is there any way to get notified when the model finished
+
+    459
+    00:38:06,148 --> 00:38:09,028
+    so that we don't have to be watching it on techniques from time to
+
+    460
+    00:38:09,058 --> 00:38:13,828
+    time and photo little short-term adult actor
+
+    461
+    00:38:15,302 --> 00:38:16,288
+    gentle hum oh i'm sorry
+
+    462
+    00:38:18,148 --> 00:38:22,648
+    we don't have any any way to do that much lather as i am
+
+    463
+    00:38:22,648 --> 00:38:25,053
+    aware of i can check it but
+
+    464
+    00:38:26,128 --> 00:38:26,788
+    then can we do
+
+    465
+    00:38:33,508 --> 00:38:35,248
+    just drink a little bit of work
+
+    466
+    00:38:48,058 --> 00:38:51,028
+    so the modern trappings well ah
+
+    467
+    00:38:51,328 --> 00:38:52,498
+    why would we models
+
+    468
+    00:38:54,418 --> 00:38:59,098
+    i'll just show you a little more we have here we have two other
+
+    469
+    00:38:59,098 --> 00:39:00,508
+    sections on our
+
+    470
+    00:39:02,548 --> 00:39:08,248
+    our knowledge hub this faq and troubleshooting okay we try to keep these updated
+
+    471
+    00:39:08,278 --> 00:39:11,128
+    as possible we have everything that's happened so far
+
+    472
+    00:39:12,958 --> 00:39:17,428
+    there's already a couple of freedom has two questions and all the bud form
+
+    473
+    00:39:17,428 --> 00:39:20,908
+    how my log down what i have to do how to interact with the
+
+    474
+    00:39:20,908 --> 00:39:21,748
+    models
+
+    475
+    00:39:23,728 --> 00:39:28,228
+    so you can always check here if you're the problem you're having has a
+
+    476
+    00:39:28,228 --> 00:39:34,108
+    solution okay we haven't traditionally about it there was i i talked about a
+
+    477
+    00:39:34,108 --> 00:39:35,068
+    little bit okay
+
+    478
+    00:39:38,128 --> 00:39:43,918
+    ah we also have on those lack channels we have the predict project help
+
+    479
+    00:39:44,338 --> 00:39:45,208
+    that is a bot
+
+    480
+    00:39:46,318 --> 00:39:48,928
+    that can answer most questions
+
+    481
+    00:39:50,518 --> 00:39:51,178
+    yes
+
+    482
+    00:39:53,908 --> 00:39:55,348
+    with all information
+
+    483
+    00:39:56,488 --> 00:39:59,788
+    on this knowledge hub on all the pages that you saw on the guidelines
+
+    484
+    00:40:00,838 --> 00:40:05,908
+    so he's able to ask to answer most question just what
+
+    485
+    00:40:07,918 --> 00:40:14,398
+    he's a bond he's our advice a lie but he cannot religious so sometimes
+
+    486
+    00:40:14,398 --> 00:40:19,288
+    people just send him ah ah a screenshot he will not be able to
+
+    487
+    00:40:19,288 --> 00:40:23,968
+    understand okay so if you have any screenshot you can just copy and paste
+
+    488
+    00:40:23,968 --> 00:40:26,758
+    the content you can rely on your awards
+
+    489
+    00:40:29,285 --> 00:40:32,285
+    but he's yet to understand an image okay
+
+    490
+    00:40:35,675 --> 00:40:37,565
+    so the model i'm taking their time
+
+    491
+    00:40:40,145 --> 00:40:42,305
+    ah you know five minutes
+
+    492
+    00:40:43,595 --> 00:40:49,025
+    one thing that happens from time to time is that we get an update
+
+    493
+    00:40:49,085 --> 00:40:52,355
+    from the monet che fai okay if you just say i think
+
+    494
+    00:40:53,555 --> 00:40:56,915
+    i think that beja had a kind of screenshot
+
+    495
+    00:40:58,385 --> 00:40:59,015
+    it is one
+
+    496
+    00:41:02,135 --> 00:41:07,025
+    their knowledge but sometimes upon ha fi ask you to updating this is a
+
+    497
+    00:41:07,025 --> 00:41:11,735
+    mandatory so all you have to do is go back to the saying
+
+    498
+    00:41:13,325 --> 00:41:18,275
+    to the same page that you downloaded your first version remove the file and
+
+    499
+    00:41:18,425 --> 00:41:19,505
+    installer it again
+
+    500
+    00:41:22,415 --> 00:41:24,635
+    and then you have the little a fight me
+
+    501
+    00:41:30,095 --> 00:41:34,415
+    so why the wonders have been anyone has any questions and adults are free
+
+    502
+    00:41:34,445 --> 00:41:34,925
+    to
+
+    503
+    00:41:36,245 --> 00:41:36,965
+    to ask them
+
+    504
+    00:41:51,425 --> 00:41:52,895
+    and seeing what they're doing
+
+    505
+    00:41:58,595 --> 00:41:59,765
+    and it is basically
+
+    506
+    00:42:05,465 --> 00:42:05,795
+    so
+
+    507
+    00:42:06,905 --> 00:42:11,915
+    after you're free why the we are not aiming i'm going to do to
+
+    508
+    00:42:11,915 --> 00:42:14,435
+    show that the next taps okay
+
+    509
+    00:42:16,415 --> 00:42:18,155
+    first broke that you can rewrite it
+
+    510
+    00:42:19,355 --> 00:42:19,925
+    description
+
+    511
+    00:42:21,245 --> 00:42:26,195
+    you'll be asked to evaluate if we were fortunately enough to show you guys
+
+    512
+    00:42:26,615 --> 00:42:31,535
+    you have to evaluate the models and in a couple of ways okay the
+
+    513
+    00:42:31,565 --> 00:42:33,455
+    first one is
+
+    514
+    00:42:35,105 --> 00:42:42,605
+    you will be asked several questions if i remembering correctly that you have to
+
+    515
+    00:42:42,605 --> 00:42:46,025
+    evaluate on an axis on ah
+
+    516
+    00:42:47,525 --> 00:42:48,635
+    like ah
+
+    517
+    00:42:49,115 --> 00:42:54,845
+    interface design interface design here is more like architectural key is not more why
+
+    518
+    00:42:56,435 --> 00:42:56,975
+    um
+
+    519
+    00:42:57,995 --> 00:43:01,685
+    i'll have to to evaluate them on a likert scale that's like
+
+    520
+    00:43:02,825 --> 00:43:11,735
+    motherly need strongly batters likely better neutral or be slightly better more better or
+
+    521
+    00:43:12,515 --> 00:43:19,205
+    greater than other gaming room as heavyweight the models are pros and cons okay
+
+    522
+    00:43:19,355 --> 00:43:22,955
+    so lonely when did good or indeed it while the beans
+
+    523
+    00:43:23,045 --> 00:43:29,728
+    i think mdm you'll have to give an overall preference of your of of
+
+    524
+    00:43:29,826 --> 00:43:34,565
+    your model in that interaction okay so maybe
+
+    525
+    00:43:35,915 --> 00:43:41,045
+    moto a was better for a couple of reasons much most of the time
+
+    526
+    00:43:41,105 --> 00:43:46,891
+    most of the times you select based on your preference and ah when you
+
+    527
+    00:43:46,895 --> 00:43:49,055
+    are evaluating on the axis
+
+    528
+    00:43:50,825 --> 00:43:56,135
+    not always just one model will do everything better so when the fighting moves
+
+    529
+    00:43:56,195 --> 00:43:59,975
+    five questions seven questions that you will have ninety eight
+
+    530
+    00:44:01,475 --> 00:44:05,765
+    was better in four of them and be in three of them that is
+
+    531
+    00:44:05,765 --> 00:44:08,975
+    okay that is even it's okay italy
+
+    532
+    00:44:10,025 --> 00:44:11,765
+    rare a model
+
+    533
+    00:44:13,325 --> 00:44:18,545
+    only one model everything good okay so i'm very mine
+
+    534
+    00:44:20,675 --> 00:44:24,095
+    okay yeah as you can see a lot of ob-gyn starts and was returned
+
+    535
+    00:44:24,095 --> 00:44:24,545
+    to the
+
+    536
+    00:44:25,625 --> 00:44:26,375
+    to the terminal
+
+    537
+    00:44:32,105 --> 00:44:33,935
+    although maybe a lot of things
+
+    538
+    00:44:36,005 --> 00:44:38,675
+    let's just meet from other aid to compete
+
+    539
+    00:44:44,144 --> 00:44:51,125
+    you can start seeing here everything to analyze what other bd better than analyze
+
+    540
+    00:44:51,215 --> 00:44:53,465
+    what moderate the best
+
+    541
+    00:44:55,295 --> 00:44:56,615
+    since the first moment
+
+    542
+    00:44:58,235 --> 00:44:59,555
+    so yeah gives me a plan
+
+    543
+    00:45:06,005 --> 00:45:07,715
+    movie is a little bit smaller
+
+    544
+    00:45:12,515 --> 00:45:16,325
+    as you can see a character on the tasks this is good is very
+
+    545
+    00:45:16,325 --> 00:45:21,935
+    good at expectation the model made the changes created tests and then tried to
+
+    546
+    00:45:21,935 --> 00:45:28,115
+    run it but remember run the tests on the docker file this is very
+
+    547
+    00:45:28,115 --> 00:45:28,955
+    important don't
+
+    548
+    00:45:28,985 --> 00:45:35,435
+    take the word of the model for a rely sometimes always check the answer
+
+    549
+    00:45:38,315 --> 00:45:40,865
+    so as you can see it
+
+    550
+    00:45:42,365 --> 00:45:43,955
+    been a couple of backs
+
+    551
+    00:45:46,355 --> 00:45:49,378
+    as i have a living space here i'm not going to show you all
+
+    552
+    00:45:49,378 --> 00:45:49,595
+    the
+
+    553
+    00:45:50,885 --> 00:45:53,105
+    although the final because
+
+    554
+    00:46:03,429 --> 00:46:06,725
+    and when asked how just a camera on the site and with question
+
+    555
+    00:46:08,195 --> 00:46:13,445
+    and i told you that we have these guidelines but a dimension or on
+
+    556
+    00:46:13,445 --> 00:46:14,555
+    our getting storage
+
+    557
+    00:46:17,945 --> 00:46:18,335
+    ooh
+
+    558
+    00:46:21,275 --> 00:46:26,015
+    we have these here is option if you go into score the team external
+
+    559
+    00:46:26,345 --> 00:46:30,515
+    okay here you have to create the team looks cough
+
+    560
+    00:46:31,745 --> 00:46:38,105
+    you have to enable your mouse and your history limit here is seventy five
+
+    561
+    00:46:38,165 --> 00:46:46,205
+    thousand lines okay these are in lines so i can grow up to seventy
+
+    562
+    00:46:46,205 --> 00:46:51,005
+    five thousand lines sometimes enough sometimes it's not
+
+    563
+    00:46:52,715 --> 00:46:57,875
+    but then you have created this file can source the file yellow t-max and
+
+    564
+    00:46:57,875 --> 00:47:00,455
+    you will be able to scroll it upwards
+
+    565
+    00:47:04,327 --> 00:47:09,005
+    if you can get an error here there sometimes when you run this command
+
+    566
+    00:47:09,065 --> 00:47:13,175
+    you can get an error just you can fix it like this okay
+
+    567
+    00:47:18,455 --> 00:47:20,285
+    i'm sorry i don't go okay
+
+    568
+    00:47:22,595 --> 00:47:25,625
+    are we too we have another question
+
+    569
+    00:47:27,665 --> 00:47:34,235
+    doe get to also tyner and running the prompt yes you'll have to pause
+
+    570
+    00:47:34,235 --> 00:47:39,035
+    the timer every time the models are thinking the is still thinking that's why
+
+    571
+    00:47:39,095 --> 00:47:44,315
+    i needn't pause my passes but the minute they end you can resume your
+
+    572
+    00:47:44,315 --> 00:47:46,955
+    task because now news not work now
+
+    573
+    00:47:46,985 --> 00:47:51,965
+    you start analyzing what we need the files and everything else okay
+
+    574
+    00:47:54,065 --> 00:47:56,345
+    as just a month away in an answer
+
+    575
+    00:47:58,745 --> 00:48:01,505
+    it took more time to to start it but
+
+    576
+    00:48:03,605 --> 00:48:05,075
+    it will take more time to
+
+    577
+    00:48:06,155 --> 00:48:10,475
+    to end it but i think he's trying to run tests yeah
+
+    578
+    00:48:11,825 --> 00:48:12,725
+    he must be ending
+
+    579
+    00:48:22,685 --> 00:48:27,335
+    and he asked me that morning video be available later why i'd like to
+
+    580
+    00:48:27,335 --> 00:48:32,735
+    know who was already yes when you are editing the channel if you already
+
+    581
+    00:48:32,885 --> 00:48:38,435
+    are michelle will send ah message with the link
+
+    582
+    00:48:39,125 --> 00:48:40,175
+    for this recording
+
+    583
+    00:48:50,975 --> 00:48:51,275
+    okay
+
+    584
+    00:48:51,425 --> 00:48:55,115
+    his two doing some task i want to show you guys the
+
+    585
+    00:48:57,005 --> 00:49:01,775
+    the devaluations is important so bear with me a little
+
+    586
+    00:49:08,255 --> 00:49:08,645
+    ah
+
+    587
+    00:49:09,815 --> 00:49:14,315
+    geez jason last only want to ask as finish can i was the tests
+
+    588
+    00:49:14,585 --> 00:49:15,335
+    to finalize
+
+    589
+    00:49:16,745 --> 00:49:22,685
+    i reach a little more so to see if on the ends okay
+
+    590
+    00:49:24,965 --> 00:49:30,545
+    because why i'm saying this because we do analyze the elapsed time in the
+
+    591
+    00:49:30,575 --> 00:49:32,555
+    posit time of the task okay
+
+    592
+    00:49:33,755 --> 00:49:36,665
+    so sometimes you can't raise a red flag
+
+    593
+    00:49:42,575 --> 00:49:43,835
+    i mean we in
+
+    594
+    00:49:45,065 --> 00:49:48,065
+    getting more into directly like that as we see
+
+    595
+    00:49:49,325 --> 00:49:54,575
+    how frequently should we have some illington experts and try to to abuse the
+
+    596
+    00:49:54,575 --> 00:49:58,685
+    platform and so we have a couple of guard rails we analyze a few
+
+    597
+    00:49:58,685 --> 00:50:05,285
+    matters that's why is important to follow these these rules okay
+
+    598
+    00:50:12,275 --> 00:50:14,825
+    janam on the sticky at the time
+
+    599
+    00:50:17,555 --> 00:50:21,275
+    oh i had to talk a little bit more about the modway is thinking
+
+    600
+    00:50:21,335 --> 00:50:26,045
+    about our platform okay well the desk is paused you can pause to up
+
+    601
+    00:50:26,100 --> 00:50:27,515
+    to forty eight hours
+
+    602
+    00:50:29,687 --> 00:50:34,547
+    sometimes your that your task may expire the
+
+    603
+    00:50:36,167 --> 00:50:37,697
+    different expires
+
+    604
+    00:50:39,467 --> 00:50:44,057
+    for the first time or my completion time because you'll have five hours to
+
+    605
+    00:50:44,057 --> 00:50:46,457
+    go with your your your task
+
+    606
+    00:50:48,197 --> 00:50:53,537
+    for some reason it expires you didn't finish in five hours it will expire
+
+    607
+    00:50:54,197 --> 00:50:55,007
+    that's okay
+
+    608
+    00:50:56,057 --> 00:51:02,177
+    we're receiving mail in a couple of hours ah trying to reclaim the task
+
+    609
+    00:51:03,047 --> 00:51:11,417
+    okay ah but like because we have a little bit of delay before they
+
+    610
+    00:51:11,417 --> 00:51:16,187
+    are past expiration and you're reclaiming mail someone
+
+    611
+    00:51:16,607 --> 00:51:20,717
+    may may choose the same issue that you were working on
+
+    612
+    00:51:22,247 --> 00:51:26,927
+    and this is rare but it happens because it's a lot of people and
+
+    613
+    00:51:26,927 --> 00:51:29,117
+    sometimes it can reclaim your task anymore
+
+    614
+    00:51:36,887 --> 00:51:37,397
+    ah
+
+    615
+    00:51:40,367 --> 00:51:44,597
+    i i want to show you guys please the first evaluation and how to
+
+    616
+    00:51:44,597 --> 00:51:49,637
+    submit the task on the so that's a couple of minutes
+
+    617
+    00:51:51,017 --> 00:51:51,647
+    um
+
+    618
+    00:51:52,817 --> 00:51:57,497
+    while i will talk more about the way you submit i ask what what
+
+    619
+    00:51:57,737 --> 00:51:58,547
+    happens later
+
+    620
+    00:52:00,047 --> 00:52:05,597
+    your best will be reviewed okay because i think all of you that are
+
+    621
+    00:52:05,597 --> 00:52:10,427
+    new to this project you went through the learning curve because you are in
+
+    622
+    00:52:10,427 --> 00:52:15,257
+    the learning curve you can only do one task at a time okay so
+
+    623
+    00:52:15,767 --> 00:52:19,397
+    you'll only be able to start their second task
+
+    624
+    00:52:19,907 --> 00:52:22,967
+    after you receive the review from the first one
+
+    625
+    00:52:24,197 --> 00:52:27,287
+    and then the first question that you may have is when do i get
+
+    626
+    00:52:27,317 --> 00:52:33,347
+    my test review well the learning curve has a priority queue they they're the
+
+    627
+    00:52:33,347 --> 00:52:34,757
+    first one that we review
+
+    628
+    00:52:35,957 --> 00:52:39,827
+    so a review from the learning curve can take up to one up to
+
+    629
+    00:52:39,827 --> 00:52:41,717
+    two days at most
+
+    630
+    00:52:44,117 --> 00:52:46,067
+    once you get out the learning curve
+
+    631
+    00:52:47,147 --> 00:52:53,657
+    the new can do more tasks at a time up to eight yes it's
+
+    632
+    00:52:53,657 --> 00:52:54,317
+    my mistake
+
+    633
+    00:52:55,945 --> 00:53:00,047
+    the review than it can take up to five days to receive an issue
+
+    634
+    00:53:00,257 --> 00:53:00,497
+    okay
+
+    635
+    00:53:01,727 --> 00:53:05,837
+    and that's why they enable you to do more testing months
+
+    636
+    00:53:09,377 --> 00:53:13,247
+    let me see that there's a question here on cause why do i have
+
+    637
+    00:53:13,247 --> 00:53:16,667
+    to pause the timer and start to call mr tasker supposed to have a
+
+    638
+    00:53:16,667 --> 00:53:17,327
+    time limit
+
+    639
+    00:53:18,647 --> 00:53:20,957
+    because the family meets magic first of all
+
+    640
+    00:53:22,367 --> 00:53:23,387
+    in this moment
+
+    641
+    00:53:24,587 --> 00:53:25,697
+    you are not doing any work
+
+    642
+    00:53:27,197 --> 00:53:32,417
+    who's working here is the models were waiting them to complete their classes okay
+
+    643
+    00:53:34,493 --> 00:53:36,827
+    we do have a five hour limits
+
+    644
+    00:53:38,507 --> 00:53:46,937
+    and most experts take around three hours to finish a task so we gave
+
+    645
+    00:53:46,937 --> 00:53:53,927
+    you um two hours more to complete a task and most people doing three
+
+    646
+    00:53:54,677 --> 00:53:54,977
+    okay
+
+    647
+    00:53:57,137 --> 00:54:04,847
+    ah because we expect that when you are analyzing the the models who will
+
+    648
+    00:54:04,850 --> 00:54:06,047
+    do a truly
+
+    649
+    00:54:07,157 --> 00:54:12,737
+    evaluation of everything you run the tests you will see the files and changes
+
+    650
+    00:54:13,097 --> 00:54:16,667
+    because for you to evaluate the model the first thing you have to do
+
+    651
+    00:54:17,027 --> 00:54:21,767
+    is to evaluate not only what we did with the files change that makes
+
+    652
+    00:54:21,767 --> 00:54:26,327
+    us the solution you can compare it to the original p r you can
+
+    653
+    00:54:26,357 --> 00:54:27,169
+    go here we
+
+    654
+    00:54:27,232 --> 00:54:28,247
+    have this p r him
+
+    655
+    00:54:31,517 --> 00:54:37,877
+    and you can compare if the models changing the same same files we did
+
+    656
+    00:54:38,147 --> 00:54:43,547
+    sometimes a model can do a better implementation than the human p that's okay
+
+    657
+    00:54:44,327 --> 00:54:49,187
+    but our findings regarding innovation must be the same so
+
+    658
+    00:54:49,937 --> 00:54:53,447
+    you will take our time to avoid everything is okay
+
+    659
+    00:54:56,777 --> 00:55:01,007
+    and remember why the task is lost you don't have to wait
+
+    660
+    00:55:02,837 --> 00:55:06,227
+    you just have to just wait until we finished
+
+    661
+    00:55:11,297 --> 00:55:17,147
+    so yeah evaluation and this is the most important parts into business why you
+
+    662
+    00:55:17,177 --> 00:55:18,287
+    have to take your time
+
+    663
+    00:55:20,207 --> 00:55:27,617
+    those the heavy feedback enforcement learning that we do your part is the most
+
+    664
+    00:55:27,617 --> 00:55:32,385
+    important when we're done with the model in pros and cons and why you
+
+    665
+    00:55:32,385 --> 00:55:35,357
+    to why you prefer i don't know but
+
+    666
+    00:55:37,247 --> 00:55:43,877
+    make spectrum to put all our technical knowledge into that evaluation because that's be
+
+    667
+    00:55:43,907 --> 00:55:49,937
+    used to improve the models that will be basically use on a daily basis
+
+    668
+    00:55:58,997 --> 00:56:04,487
+    model b e state mallory is thinking the time mother beaching five fives in
+
+    669
+    00:56:04,487 --> 00:56:06,047
+    the er and the fucking highness
+
+    670
+    00:56:17,837 --> 00:56:18,557
+    so am i
+
+    671
+    00:56:19,817 --> 00:56:24,077
+    he was talking about the question of of world
+
+    672
+    00:56:26,387 --> 00:56:30,167
+    possible important parts places still elevate everything
+
+    673
+    00:56:32,447 --> 00:56:39,767
+    it's running password intervene that's everything that i just said it's here for you
+
+    674
+    00:56:39,767 --> 00:56:40,487
+    to understand
+
+    675
+    00:56:44,843 --> 00:56:52,037
+    review your tasks based on these few send us ah pardoning reason
+
+    676
+    00:56:53,747 --> 00:56:57,407
+    pros and cons that no actual points from the review
+
+    677
+    00:57:04,757 --> 00:57:07,327
+    like this example of ah
+
+    678
+    00:57:08,867 --> 00:57:12,287
+    i wanted to do this when i was evaluating the models but on the
+
+    679
+    00:57:12,287 --> 00:57:13,487
+    risk-taking it's time
+
+    680
+    00:57:15,227 --> 00:57:15,527
+    so
+
+    681
+    00:57:16,667 --> 00:57:17,867
+    but you can find here
+
+    682
+    00:57:21,797 --> 00:57:23,837
+    that i can smoking guys
+
+    683
+    00:57:28,427 --> 00:57:31,607
+    what was your conclusions look like
+
+    684
+    00:57:33,737 --> 00:57:35,867
+    okay something like this
+
+    685
+    00:57:41,507 --> 00:57:43,457
+    one man unification look like it
+
+    686
+    00:57:49,607 --> 00:57:58,517
+    just any models just telling just vague answers you can be more details here
+
+    687
+    00:57:59,117 --> 00:58:03,437
+    the money flows better you don't have to get to this perceived like oh
+
+    688
+    00:58:03,437 --> 00:58:09,527
+    we change its bio accessed by but okay he did using good hygiene
+
+    689
+    00:58:09,767 --> 00:58:15,230
+    a change the correct files it updated you can see data or files on
+
+    690
+    00:58:15,230 --> 00:58:16,997
+    this architecture then
+
+    691
+    00:58:18,317 --> 00:58:19,577
+    you can view the most
+
+    692
+    00:58:20,777 --> 00:58:24,407
+    information possible and already on one another
+
+    693
+    00:58:27,647 --> 00:58:33,257
+    um well ask me interactions the ones that have proven art with the models
+
+    694
+    00:58:33,497 --> 00:58:36,677
+    yes each vote sorry
+
+    695
+    00:58:40,577 --> 00:58:48,287
+    here is an interaction okay so first brought one interaction second part to interactions
+
+    696
+    00:58:48,497 --> 00:58:50,057
+    are not to interactions
+
+    697
+    00:58:51,857 --> 00:58:56,807
+    guy model is most important when i know that i have to stop
+
+    698
+    00:58:58,817 --> 00:59:01,007
+    and go back to the beginning of their own body
+
+    699
+    00:59:02,057 --> 00:59:10,397
+    when i said that we are reviewers when the models finally achieve the correct
+
+    700
+    00:59:10,457 --> 00:59:12,047
+    answer anymore fee
+
+    701
+    00:59:13,097 --> 00:59:18,377
+    confidence than that p r will be approved by a human that's when you
+
+    702
+    00:59:18,377 --> 00:59:18,977
+    have to stop
+
+    703
+    00:59:20,057 --> 00:59:23,177
+    okay i'm looking up because you guys are on my
+
+    704
+    00:59:24,467 --> 00:59:25,787
+    by underscoring your own
+
+    705
+    00:59:28,067 --> 00:59:31,397
+    so that's when it helps the sub and sometimes most can take more than
+
+    706
+    00:59:31,397 --> 00:59:38,147
+    six times because it's some more complex issue than initially thought and it's okay
+
+    707
+    00:59:38,687 --> 00:59:40,727
+    it happens that's not a problem
+
+    708
+    00:59:46,727 --> 00:59:48,107
+    some other way please
+
+    709
+    00:59:49,637 --> 00:59:50,837
+    me thinking they're ten
+
+    710
+    00:59:57,137 --> 00:59:58,067
+    he checked the link
+
+    711
+    01:00:03,707 --> 01:00:04,877
+    run the tests
+
+    712
+    01:00:07,667 --> 01:00:08,267
+    it's ending
+
+    713
+    01:00:11,027 --> 01:00:12,647
+    but one thing that is important
+
+    714
+    01:00:14,027 --> 01:00:23,237
+    umm irony isn't ah a constraint here model b was a is not better
+
+    715
+    01:00:23,267 --> 01:00:29,866
+    because it was faster okay look exactly what he did maybe moderate is taking
+
+    716
+    01:00:29,866 --> 01:00:33,917
+    more time or is making a better solution is speaking about
+
+    717
+    01:00:34,557 --> 01:00:36,147
+    and he's been the leader
+
+    718
+    01:00:39,237 --> 01:00:41,817
+    and shouldn't be a measure on your application
+
+    719
+    01:00:51,057 --> 01:00:56,307
+    so let me get more so i'm going to fast forward a little bit
+
+    720
+    01:00:56,337 --> 01:01:01,377
+    because we are running out of time and muddle you're already passed upon and
+
+    721
+    01:01:01,377 --> 01:01:01,797
+    cmo
+
+    722
+    01:01:03,357 --> 01:01:06,417
+    and money still market so
+
+    723
+    01:01:07,827 --> 01:01:08,307
+    ah
+
+    724
+    01:01:09,387 --> 01:01:14,307
+    after calibrated everything you will submit your task on the developer from
+
+    725
+    01:01:15,597 --> 01:01:19,947
+    here's a couple of important things new okay they have to make the final
+
+    726
+    01:01:19,947 --> 01:01:20,757
+    elevations
+
+    727
+    01:01:21,867 --> 01:01:25,467
+    i'm sure you're just a guy being a platforming i mean just let me
+
+    728
+    01:01:25,647 --> 01:01:30,327
+    go through the guidelines over the way and perfect
+
+    729
+    01:01:32,037 --> 01:01:32,397
+    so
+
+    730
+    01:01:34,047 --> 01:01:35,187
+    it does everything for model
+
+    731
+    01:01:36,267 --> 01:01:41,487
+    a changes knee gave me a summary run on the tests told me how
+
+    732
+    01:01:41,487 --> 01:01:47,007
+    it works and a mother being just told me likely monitors in advance so
+
+    733
+    01:01:47,877 --> 01:01:48,987
+    what i have to know
+
+    734
+    01:01:50,637 --> 01:01:51,117
+    check
+
+    735
+    01:01:53,097 --> 01:01:53,967
+    older
+
+    736
+    01:01:55,257 --> 01:02:01,707
+    doesn't need could not reach his ancient pious mother be just fine
+
+    737
+    01:02:03,087 --> 01:02:06,357
+    i don't know i'll have to anyway to have to look if that makes
+
+    738
+    01:02:06,357 --> 01:02:07,887
+    sense as everything's correct
+
+    739
+    01:02:08,427 --> 01:02:10,347
+    in the the tests are learning
+
+    740
+    01:02:13,257 --> 01:02:18,147
+    so you have to come here to the other way you can run docker
+
+    741
+    01:02:18,147 --> 01:02:23,967
+    here to see the tests that are really running the docker fantasy worlds everything
+
+    742
+    01:02:23,967 --> 01:02:30,957
+    else so this now after the ended we go here we resume our task
+
+    743
+    01:02:32,157 --> 01:02:37,977
+    and we start or evaluation and we will check everything very both models that
+
+    744
+    01:02:38,487 --> 01:02:45,147
+    take our time okay and then we start to evaluate the models pros and
+
+    745
+    01:02:45,147 --> 01:02:45,687
+    cons
+
+    746
+    01:02:48,987 --> 01:02:52,257
+    i read some frozen coins he is that i'm going to
+
+    747
+    01:02:53,487 --> 01:02:55,107
+    do you live the ones that you
+
+    748
+    01:02:56,367 --> 01:02:59,247
+    that you saw just as an example okay
+
+    749
+    01:03:00,747 --> 01:03:01,377
+    some other we
+
+    750
+    01:03:05,367 --> 01:03:06,807
+    whether we use this matter
+
+    751
+    01:03:10,257 --> 01:03:11,367
+    of model b
+
+    752
+    01:03:12,507 --> 01:03:13,197
+    these
+
+    753
+    01:03:15,747 --> 01:03:17,037
+    the condom on baby
+
+    754
+    01:03:22,767 --> 01:03:27,807
+    and you can go open down the arrows okay if you're gonna change something
+
+    755
+    01:03:27,807 --> 01:03:32,067
+    if you like knowing i'm mistaken i tried something like this
+
+    756
+    01:03:33,147 --> 01:03:39,177
+    kilo open down your arrows arrows keys on the keyboard to to change anything
+
+    757
+    01:03:39,177 --> 01:03:40,377
+    that you feel much
+
+    758
+    01:03:42,117 --> 01:03:47,097
+    ah so the first x you'll have to evaluate is which one has been
+
+    759
+    01:03:47,157 --> 01:03:52,887
+    logic and then you feel both left and right to choose the new option
+
+    760
+    01:03:52,947 --> 01:03:54,477
+    that you feed the most
+
+    761
+    01:03:57,837 --> 01:04:06,027
+    matter of beauty was better like interface changes means was better handling universe okay
+
+    762
+    01:04:06,627 --> 01:04:14,307
+    and better calm and sometimes that's the option in a okay sometimes one of
+
+    763
+    01:04:14,307 --> 01:04:15,387
+    these questions
+
+    764
+    01:04:16,047 --> 01:04:21,347
+    are you indicated anything that is the bubbles did okay so you can see
+
+    765
+    01:04:21,627 --> 01:04:28,737
+    a well actually down the experts to avoid the most time to the use
+
+    766
+    01:04:28,737 --> 01:04:35,457
+    of any okay because again we are training models that that's the general objective
+
+    767
+    01:04:35,577 --> 01:04:35,997
+    of every
+
+    768
+    01:04:35,997 --> 01:04:36,807
+    anything that we do
+
+    769
+    01:04:38,277 --> 01:04:41,997
+    so it's rare debts and
+
+    770
+    01:04:43,377 --> 01:04:49,617
+    the models don't do something else but can't happen so sometimes a model they
+
+    771
+    01:04:49,617 --> 01:04:54,837
+    don't make better command something like that you can select okay so eight is
+
+    772
+    01:04:54,837 --> 01:04:56,307
+    more review ready
+
+    773
+    01:04:57,987 --> 01:05:00,417
+    and then you give your overall preference
+
+    774
+    01:05:02,217 --> 01:05:08,667
+    i'm going to live here and overall preference so modernly these a people
+
+    775
+    01:05:11,337 --> 01:05:11,577
+    you know
+
+    776
+    01:05:15,717 --> 01:05:21,327
+    and yeah oh one last questions which which of them was better and that's
+
+    777
+    01:05:21,327 --> 01:05:25,707
+    what the thing that brings you along one responded more quickly do not let
+
+    778
+    01:05:26,367 --> 01:05:30,957
+    your choice so i'm choosing somebody meet their feedback
+
+    779
+    01:05:34,437 --> 01:05:39,927
+    in what this will do it will sink the both trajectories so if we
+
+    780
+    01:05:39,927 --> 01:05:45,867
+    choose model t then when we start the next interaction they will show you
+
+    781
+    01:05:45,867 --> 01:05:49,227
+    i mean they will simple everything that model a b
+
+    782
+    01:05:50,517 --> 01:05:54,597
+    the mother of eight did with model eight so it was likely he will
+
+    783
+    01:05:54,927 --> 01:06:01,827
+    undo everything and copy model solution to here and now you have to interact
+
+    784
+    01:06:03,507 --> 01:06:09,447
+    these model eight did okay so if you want to the next prompt you
+
+    785
+    01:06:09,447 --> 01:06:11,187
+    select continue conversation
+
+    786
+    01:06:12,417 --> 01:06:18,387
+    last few ah during the interaction find that you got to the final solution
+
+    787
+    01:06:18,387 --> 01:06:23,457
+    you don't have to ask any more questions than you finish your conversation okay
+
+    788
+    01:06:23,817 --> 01:06:27,837
+    i'm going to continue conversation just to show you everything
+
+    789
+    01:06:29,067 --> 01:06:32,337
+    so beginning everything that other live here
+
+    790
+    01:06:33,597 --> 01:06:39,143
+    and then we are on our next prompt this is our second interaction anyone
+
+    791
+    01:06:39,143 --> 01:06:43,857
+    can do all over again you already know why this we're in the mess
+
+    792
+    01:06:44,217 --> 01:06:46,917
+    and maybe motorway is
+
+    793
+    01:06:48,327 --> 01:06:52,917
+    miss the to do some tests and the start again every your questions in
+
+    794
+    01:06:52,917 --> 01:06:58,257
+    your prompts to make better hygiene and maybe even commit on the files because
+
+    795
+    01:06:58,347 --> 01:07:03,927
+    the files are bad people comments so this is important you referred for you
+
+    796
+    01:07:03,927 --> 01:07:07,797
+    to create a peer you have to commit a few the other files
+
+    797
+    01:07:09,217 --> 01:07:12,417
+    start running everything okay so
+
+    798
+    01:07:13,977 --> 01:07:20,307
+    you can end the conversation control single proceed if by any means you get
+
+    799
+    01:07:20,307 --> 01:07:27,837
+    this conversation here this error that happens contests remaining you can do what i
+
+    800
+    01:07:27,837 --> 01:07:33,087
+    just did controversy controversy to end the conversation and start a new
+
+    801
+    01:07:33,987 --> 01:07:37,347
+    this new one new generate another interpret id
+
+    802
+    01:07:38,517 --> 01:07:42,237
+    that you will have to paste in here along with the first one okay
+
+    803
+    01:07:44,217 --> 01:07:44,607
+    so
+
+    804
+    01:07:46,317 --> 01:07:48,657
+    why are satisfied with everything the mother did
+
+    805
+    01:07:50,487 --> 01:07:55,767
+    and you have to submit our task on the developer i base all my
+
+    806
+    01:07:55,767 --> 01:07:56,877
+    sessions idea
+
+    807
+    01:07:58,527 --> 01:08:03,947
+    it's important to to paste your first prompt here i'm going to get him
+
+    808
+    01:08:03,957 --> 01:08:05,487
+    and i have saved
+
+    809
+    01:08:06,957 --> 01:08:08,697
+    and now have to upload
+
+    810
+    01:08:10,017 --> 01:08:14,967
+    your repos are okay as you can see you you'll have a comment here
+
+    811
+    01:08:15,417 --> 01:08:16,167
+    so you can
+
+    812
+    01:08:23,195 --> 01:08:26,787
+    just because i have to go up one forward
+
+    813
+    01:08:37,347 --> 01:08:39,837
+    a little less here
+
+    814
+    01:08:44,187 --> 01:08:50,487
+    the file size is twelve megabytes perfectly we do have a restriction of two
+
+    815
+    01:08:50,487 --> 01:08:51,627
+    hundred megabytes
+
+    816
+    01:08:53,337 --> 01:09:00,297
+    here on the on the platform you can generate our gc to expel the
+
+    817
+    01:09:00,327 --> 01:09:04,497
+    final power is bigger than two hundred megabytes you can generate a third easy
+
+    818
+    01:09:04,857 --> 01:09:10,317
+    if still it's bigger than noun two hundred megabytes
+
+    819
+    01:09:11,667 --> 01:09:17,967
+    we don't have an effect section a couple of commands in anything that are
+
+    820
+    01:09:20,067 --> 01:09:22,887
+    here that you can
+
+    821
+    01:09:27,897 --> 01:09:28,347
+    ooh
+
+    822
+    01:09:32,787 --> 01:09:36,777
+    the champion solid position game if not this is amazing
+
+    823
+    01:09:38,367 --> 01:09:38,577
+    okay
+
+    824
+    01:09:39,237 --> 01:09:44,337
+    but you can change your vp bow history okay it's not a problem to
+
+    825
+    01:09:44,337 --> 01:09:51,597
+    for example if when you start your task and your repo already generated ah
+
+    826
+    01:09:51,837 --> 01:09:58,257
+    two hundred eighty two hundred megabytes plus you can like beat all the key
+
+    827
+    01:09:58,257 --> 01:09:59,037
+    sort of previous
+
+    828
+    01:09:59,067 --> 01:10:03,567
+    me too the basis of age so obama can he started two people from
+
+    829
+    01:10:03,567 --> 01:10:08,757
+    that point on history because we will be evaluating only the initial setup
+
+    830
+    01:10:09,987 --> 01:10:10,587
+    going forwards
+
+    831
+    01:10:14,097 --> 01:10:16,287
+    so come here i'm generated my
+
+    832
+    01:10:18,207 --> 01:10:24,627
+    bio i'm going to upload it in the conference writer for morning of the
+
+    833
+    01:10:24,627 --> 01:10:26,667
+    scraped final tall open
+
+    834
+    01:10:28,827 --> 01:10:34,497
+    below here and i successively finished my task will select this option
+
+    835
+    01:10:36,220 --> 01:10:40,150
+    but i would as it were saying if the model took over an hour
+
+    836
+    01:10:40,450 --> 01:10:43,690
+    you can select this option and you can see
+
+    837
+    01:10:44,950 --> 01:10:50,440
+    moore has to explain what exactly happened and will be probed to send us
+
+    838
+    01:10:50,500 --> 01:10:58,540
+    a screenshot of the problem the same thing for all other options like it
+
+    839
+    01:10:58,540 --> 01:11:04,930
+    took over citizens' actions and like there was an error during your interactions
+
+    840
+    01:11:05,140 --> 01:11:09,640
+    this was the thought of the models as i said the
+
+    841
+    01:11:11,140 --> 01:11:11,740
+    this ambition
+
+    842
+    01:11:12,910 --> 01:11:17,140
+    social circle just clicks beneath i'm not going to be married because there was
+
+    843
+    01:11:17,740 --> 01:11:24,280
+    little or no loss an issue that we have to demand that this is
+
+    844
+    01:11:24,280 --> 01:11:26,680
+    how you finish your task
+
+    845
+    01:11:29,110 --> 01:11:36,610
+    everything be easier on the guidelines please readers can view it you have me
+
+    846
+    01:11:36,670 --> 01:11:44,170
+    ricardo our deck lead on the guidelines we usually may usually make we always
+
+    847
+    01:11:44,170 --> 01:11:47,533
+    make every week we have working sessions to talk about
+
+    848
+    01:11:47,950 --> 01:11:52,660
+    the project okay to take humming your doubts are all in english
+
+    849
+    01:11:54,370 --> 01:12:00,790
+    we did have some some some concession in spanish and portuguese because we had
+
+    850
+    01:12:00,850 --> 01:12:06,070
+    a low attendance and so we those so all are in english can you
+
+    851
+    01:12:06,100 --> 01:12:08,440
+    have oliver's on those channel
+
+    852
+    01:12:09,550 --> 01:12:10,510
+    just let me stop
+
+    853
+    01:12:13,360 --> 01:12:15,040
+    sharing so i can look at you
+
+    854
+    01:12:18,370 --> 01:12:18,670
+    he
+
+    855
+    01:12:21,490 --> 01:12:22,450
+    let me change my
+
+    856
+    01:12:23,500 --> 01:12:24,070
+    compartment
+
+    857
+    01:12:25,678 --> 01:12:26,410
+    i can stop
+
+    858
+    01:12:28,060 --> 01:12:33,460
+    that's won't be it for to the guys with too little moreover demon help
+
+    859
+    01:12:33,466 --> 01:12:38,350
+    us and is awarded that that that that can happen on forces
+
+    860
+    01:12:39,940 --> 01:12:41,110
+    does that mean
+
+    861
+    01:12:42,640 --> 01:12:45,910
+    and so these two questions that have three questions that we have
+
+    862
+    01:12:47,320 --> 01:12:52,780
+    can use different companies like pycharm for example ah yes see i mean not
+
+    863
+    01:12:52,785 --> 01:12:59,950
+    expect you the firepower and the dockerfile so everything that having guideline you have
+
+    864
+    01:12:59,950 --> 01:13:02,200
+    to follow if my channel for you
+
+    865
+    01:13:03,340 --> 01:13:06,340
+    and it fits the requirements in the deadlines show
+
+    866
+    01:13:09,040 --> 01:13:13,630
+    if i get the local ancestor can replay a combat command or regenerate new
+
+    867
+    01:13:13,870 --> 01:13:17,350
+    i think this discussion i don't see it that is better for you to
+
+    868
+    01:13:17,350 --> 01:13:23,500
+    generate a new you view id on the cloth ha fai to the backup
+
+    869
+    01:13:23,500 --> 01:13:25,690
+    at the slash correct sorry
+
+    870
+    01:13:27,029 --> 01:13:33,310
+    the portuguese like to hear this lash contact it does not work for fortunately
+
+    871
+    01:13:33,400 --> 01:13:39,160
+    so that's why it's better to start ah conversation can you view id
+
+    872
+    01:13:40,450 --> 01:13:44,380
+    teachers issues it if some you are you x bugs how we make sure
+
+    873
+    01:13:44,680 --> 01:13:47,320
+    it fits without testing it visually
+
+    874
+    01:13:48,790 --> 01:13:49,810
+    yeah i would
+
+    875
+    01:13:51,010 --> 01:13:54,580
+    telling you to choose another issue it's better for this case
+
+    876
+    01:13:58,180 --> 01:14:02,770
+    how about situation where you give a proper in either model e mother b
+
+    877
+    01:14:02,800 --> 01:14:06,730
+    does not make any changes how do you come up with the present cause
+
+    878
+    01:14:08,080 --> 01:14:09,640
+    a as well
+
+    879
+    01:14:11,440 --> 01:14:17,827
+    that is very rare okay this is this happens okay is this happens or
+
+    880
+    01:14:17,827 --> 01:14:19,090
+    not most of the times
+
+    881
+    01:14:21,130 --> 01:14:25,870
+    now what we are telling the experts to do is just to end enter
+
+    882
+    01:14:25,870 --> 01:14:35,230
+    interaction and so we many things into not being investigating this because it is
+
+    883
+    01:14:35,230 --> 01:14:38,920
+    a problem with the models but guidelines where
+
+    884
+    01:14:41,170 --> 01:14:48,820
+    working what i suggest is if you're your first prompt then i would start
+
+    885
+    01:14:48,880 --> 01:14:50,530
+    everything again okay
+
+    886
+    01:14:51,760 --> 01:14:54,970
+    i'll try to make the first book again on a new conversation
+
+    887
+    01:14:56,980 --> 01:15:04,960
+    and with all these new conversation the intrepid platform because if the problem arise
+
+    888
+    01:15:05,650 --> 01:15:12,790
+    when you are liking your third interaction because then we cannot determine when did
+
+    889
+    01:15:12,790 --> 01:15:16,030
+    you stop and then if you make the same prompt again
+
+    890
+    01:15:16,300 --> 01:15:21,910
+    may come to us like unduplicated prompting she was a problem for
+
+    891
+    01:15:23,260 --> 01:15:27,610
+    for for sprint start your new conversation if it's not
+
+    892
+    01:15:28,750 --> 01:15:30,820
+    you can see me as an internal error
+
+    893
+    01:15:36,370 --> 01:15:41,140
+    i think that today i think you are already
+
+    894
+    01:15:42,250 --> 01:15:47,560
+    enable to use the platform and cannot read our testing today tomorrow time you
+
+    895
+    01:15:47,620 --> 01:15:47,980
+    like
+
+    896
+    01:15:49,750 --> 01:15:55,120
+    and thank you for all of you being here like almost seventeen people that's
+
+    897
+    01:15:55,150 --> 01:15:56,710
+    a lot of people okay
+
+    898
+    01:15:59,440 --> 01:16:01,810
+    call your boss and see you
+
+    899
+    01:16:02,860 --> 01:16:06,340
+    on the channels thank you guys thanks for everything goodbye
+
+    900
+    01:16:09,730 --> 01:16:11,620
+    my things are much weaker
+
+    901
+    01:16:13,390 --> 01:16:14,080
+    thank you so much
+
+    "
+
+Bot's Role.
+    1. When a user inputs an github repository issue's url, the bot checks it according to a certain standard and say if it is "Good" or "Bad". At this step there is an input field for the standards to check the issues. Then the bot checks the issue according to this standard. In this case the bot could interacts with the claude AI.
+    2. The bot should automate performing tasks as much as possible with the interaction with the claude code (VS code) or claude ai in the browser.
+    3. If you think it is necessary make an prompt input that I can input some prompt to modify the output of this bot.
+
+First of all give me your plan to make this plan and once I agree then make it and in the meanwhile do every necessary bash command automatically without asking to me.
+
+
+1. I don't have any Claude API key or GitHub token.
+    I am going to interact with Claude Ai on google chorme or VS code's claude assistant myself. So the bot would have to produce only prompt to input to it in this case. And the bot should fetches to the github repo automatically.
+2. It will work on local network IP, Windows system is Host system and Ubuntu system is installed on VM ware.
+3. Bot will never execute shell commands it self just generates commands for me to run.

@@ -1,0 +1,35 @@
+const express = require('express');
+const cors = require('cors');
+const mongoose = require('mongoose');
+
+const issuesRouter = require('./routes/issues');
+const standardsRouter = require('./routes/standards');
+const promptsRouter = require('./routes/prompts');
+const setupRouter = require('./routes/setup');
+
+const app = express();
+const PORT = process.env.PORT || 3001;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/pr_bot';
+
+app.use(cors());
+app.use(express.json());
+
+app.use('/api/issues', issuesRouter);
+app.use('/api/standards', standardsRouter);
+app.use('/api/prompts', promptsRouter);
+app.use('/api/setup', setupRouter);
+
+app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    console.log('MongoDB connected');
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Backend running on http://0.0.0.0:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('MongoDB connection error:', err.message);
+    process.exit(1);
+  });

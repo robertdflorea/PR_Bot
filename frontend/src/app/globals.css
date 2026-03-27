@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #18181b;
+  color: #e4e4e7;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+textarea, input {
+  background-color: #27272a;
+  color: #e4e4e7;
+  border-color: #3f3f46;
+}
+
+textarea:focus, input:focus {
+  outline: 2px solid #6366f1;
+  outline-offset: 1px;
+}

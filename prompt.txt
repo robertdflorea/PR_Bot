@@ -4921,3 +4921,81 @@ First of all give me your plan to make this plan and once I agree then make it a
     I am going to interact with Claude Ai on google chorme or VS code's claude assistant myself. So the bot would have to produce only prompt to input to it in this case. And the bot should fetches to the github repo automatically.
 2. It will work on local network IP, Windows system is Host system and Ubuntu system is installed on VM ware.
 3. Bot will never execute shell commands it self just generates commands for me to run.
+
+
+In the 2nd step, after 5th command (Dockerfile generate and commit)  add command line for "git log", And there should be an input where user can save the head commit at the time the task was started. And make copy of it as a command after the issue url command so that user can easily copy head commit from the bot.
+and then after 6th command line add a command "tmux attach -t task" which is optional.
+And after 7th command "claude-hfi --vscode" add "cc_agentic_coding" section.
+And after that add 2 commands where user can copy github repository url and issue url that user previously input in the bot.
+
+And in the first step 1. Issue Checker, only check if the issue is good or bad. And the make a prompt for claude AI to generate the first prompt to input to the claude-hfi according to the requirement and the explanation of the Project Lead.
+
+
+
+In the electron app remove menu bar (File, Edit, View, Window, Help).
+And make the navigation bar fixed at the top so than even I scroll down the page the user can still see it fixed on the top.
+In the first step, "Issue Checker"
+First of all at the bottom of every step add "Next", "Prev" button to move forward or move backward.
+  1. Make the standard as an input form and editable by clicking icon edit. The standards to check the issue is :"- Always check to see if the codebase is valid. Here are some requirements:
+    - **Python, Javascript or Typescript** and hosted in a Git repository
+    - **≤ 200 MB** at the selected commit
+    - **Understandable** enough for you to review PRs confidently
+    - **Executable**, with clear build and run instructions
+    - **Dependency-complete**, using standard package managers (pip/conda/npm)
+    - **Tests** present
+    - Written entirely in **English**
+    - Other quality signals (recommended, not mandatory):
+        - Linters or formatters configured
+        - Actively used open-source projects (especially for applications)
+    ## 1. Issue Selection
+
+### What Makes a Good Issue
+- The issue has a detailed description.
+- The associated PR has many file changes.
+- The changes involve actual code (not just imports, comments, or docs).
+- The issue is closed (preferred, since the solution can be verified).
+- The problem is complex enough that the model needs 3+ meaningful steps to solve it.
+
+**Good example:** [pytest-dev/pytest#11538](https://github.com/pytest-dev/pytest/issues/11538)
+
+### What Makes a Bad Issue
+- No description, or only a few lines.
+- The PR changes only a few files.
+- The changes are trivial (documentation-only, minor imports, comments).
+- The model solves it in only 1–2 steps — this means the issue was too easy.
+
+**Bad example:** [langchain-ai/langchain-google#998](https://github.com/langchain-ai/langchain-google/issues/998)
+
+### Key Rules
+- Selecting an issue that is too simple results in **automatic rejection**.
+- Time spent searching for an issue does **not** count as work time. Use the provided spreadsheet.
+- Even with the spreadsheet, you must still verify the issue and repo are suitable — quickly check the PR for file count, language, and nature of changes.
+- If the model solves the issue too quickly, restart on the same page with a different issue and update everything so you don't lose prior work.
+" Summarize this and check every repo issue with this standard.
+  2. And remove Custom context input there.
+In the second step : "Setup Commands", 
+  1. Local holder name is the same as the final part of the Repository URL. So don't add extra input for that.
+    ex: Repository URL is : https://github.com/gsd-build/get-shit-done
+          Then the local folder name is get-shit-done
+  2. In  the Quick Reference - Copy as needed section, GitHub Issue URL is not set automatically. Use previously input Github Issue URL in the first step.
+
+
+
+
+
+First of all on the frontend there must be refresh function.
+And then in the second section after 9. Enable agentic coding ... , add two inputs that saves this kind of values : "tmux attach -t 42242620-be37-4bb4-80f4-fac0f75b3ec5-A", 
+Once I input "...-B" then other should automatically be "...-A" and vice versa.
+
+
+
+Store everything in the database with user information.
+The default prompt should be individual according to users. Of course the initial prompts are all the same.
+I mean for every values have their default, and users can modify and use them individually and could be able to reset it to original ones, here the default values must be stored seperately.
+Only admin can change it directly.
+Users copy the necessary data from admin and store, modify and use them.
+And at the end of the prompt there should be Save button that saves everything in the tasks.
+Github issue url, parent commit SHA, commit SHA, tmux uuid, prompt contents, interaction results, user info, date, time.
+Once save it and then clear everything on the frontend except default values.
+
+

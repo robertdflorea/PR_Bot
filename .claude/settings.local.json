@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(npm install:*)",
+      "Bash(mkdir -p \"i:/My_Profile/Me/Revelo_info/PR writer/guide/PR_Bot/backend/uploads/avatars\")",
+      "Bash(mkdir -p \"i:/My_Profile/Me/Revelo_info/PR writer/guide/PR_Bot/backend/src/middleware\")"
+    ]
+  }
+}

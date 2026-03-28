@@ -927,6 +927,7 @@ function SetupCommands({ onPrev, onNext }) {
   const [baseSha,      setBaseSha]      = useState('');
   const [commands,     setCommands]     = useState([]);
   const [headCommit,   setHeadCommit]   = useState('');
+  const [tmuxUuid,     setTmuxUuid]     = useState('');
   const [issueResult,  setIssueResult]  = useState(null);
   const [summaryText,  setSummaryText]  = useState('');
 
@@ -935,6 +936,7 @@ function SetupCommands({ onPrev, onNext }) {
     setBaseSha(lsGet('prbot_setup_base_sha', ''));
     setCommands(lsGet('prbot_setup_commands', []));
     setHeadCommit(lsGet('prbot_head_commit', ''));
+    setTmuxUuid(lsGet('prbot_tmux_uuid', ''));
     setIssueResult(lsGet('prbot_issue_result', null));
     setSummaryText(lsGet('prbot_summary_text', ''));
   }, []);
@@ -943,6 +945,7 @@ function SetupCommands({ onPrev, onNext }) {
   useEffect(() => lsSet('prbot_setup_base_sha', baseSha),    [baseSha]);
   useEffect(() => lsSet('prbot_setup_commands', commands),   [commands]);
   useEffect(() => lsSet('prbot_head_commit',    headCommit), [headCommit]);
+  useEffect(() => lsSet('prbot_tmux_uuid',      tmuxUuid),   [tmuxUuid]);
   useEffect(() => lsSet('prbot_summary_text',   summaryText),[summaryText]);
 
   const repoFolder = repoUrl.split('/').filter(Boolean).pop() || '';
@@ -1060,12 +1063,30 @@ function SetupCommands({ onPrev, onNext }) {
           {/* Step 9: cc_agentic_coding */}
           <CcAgenticCard step={9} />
 
+          {/* Tmux UUID input */}
+          <div className="rounded-lg border border-sky-800 bg-sky-950/20 p-3 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium text-sky-300">HFI Session UUID</span>
+              {tmuxUuid && <CopyButton text={tmuxUuid} />}
+            </div>
+            <p className="text-xs text-sky-400/80">
+              Paste the UUID produced by claude-hfi after startup. Required for final submission.
+            </p>
+            <input
+              className="w-full px-3 py-2 rounded border border-sky-800 bg-zinc-900 text-sm font-mono text-sky-200 placeholder-sky-900"
+              placeholder="e.g. a1b2c3d4-e5f6-..."
+              value={tmuxUuid}
+              onChange={(e) => setTmuxUuid(e.target.value)}
+            />
+          </div>
+
           {/* Quick reference */}
           <div className="space-y-2 pt-1">
             <p className="text-xs font-medium text-zinc-400 uppercase tracking-wide">Quick Reference — copy as needed</p>
             <CopyInfoCard label="GitHub Repository URL" value={effectiveRepoUrl} />
             <CopyInfoCard label="GitHub Issue URL" value={lsGet('prbot_issue_url', '')} />
             <CopyInfoCard label="Initial Setup Commit SHA" value={headCommit} note="Required by Revelo — paste this into the platform" />
+            <CopyInfoCard label="HFI Session UUID" value={tmuxUuid} note="Required by Revelo at final submission" />
           </div>
         </div>
       )}
@@ -1239,9 +1260,18 @@ function InteractionCard({ interaction }) {
 /* ════════════════════════════════════════════════════
    STEP 3 — PROMPTS
 ════════════════════════════════════════════════════ */
+const TASK_LS_KEYS = [
+  'prbot_issue_url', 'prbot_issue_result',
+  'prbot_setup_repo_url', 'prbot_setup_base_sha', 'prbot_setup_commands',
+  'prbot_head_commit', 'prbot_tmux_uuid', 'prbot_summary_text',
+  'prbot_prompts_raw', 'prbot_prompts_parsed',
+];
+
 function Prompts({ onPrev }) {
   const [rawText,      setRawText]      = useState('');
   const [interactions, setInteractions] = useState([]);
+  const [saving,       setSaving]       = useState(false);
+  const [saveMsg,      setSaveMsg]      = useState('');
 
   useEffect(() => {
     setRawText(lsGet('prbot_prompts_raw', ''));
@@ -1253,6 +1283,33 @@ function Prompts({ onPrev }) {
 
   function parse() {
     setInteractions(parseInteractions(rawText));
+  }
+
+  async function handleSave() {
+    setSaving(true);
+    setSaveMsg('');
+    try {
+      const repoUrl = lsGet('prbot_setup_repo_url', '');
+      await api.saveTask({
+        issueUrl:        lsGet('prbot_issue_url', ''),
+        repoUrl,
+        repoFolder:      repoUrl.split('/').filter(Boolean).pop() || '',
+        baseSha:         lsGet('prbot_setup_base_sha', ''),
+        setupCommitSha:  lsGet('prbot_head_commit', ''),
+        tmuxUuid:        lsGet('prbot_tmux_uuid', ''),
+        rawInteractions: rawText,
+        interactions,
+      });
+      // Clear all task-specific data
+      TASK_LS_KEYS.forEach((k) => localStorage.removeItem(k));
+      setRawText('');
+      setInteractions([]);
+      setSaveMsg('Task saved. Fields cleared for next session.');
+    } catch (e) {
+      setSaveMsg(`Error: ${e.message}`);
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -1268,6 +1325,7 @@ function Prompts({ onPrev }) {
           <li>Q1–Q4: text answers — each block has its own copy button.</li>
           <li>Q5–Q11 and Q13: the selected rating is highlighted on the A ← → B band.</li>
           <li>Q12: justification text — copy-ready block.</li>
+          <li>Click <strong>Save Task</strong> at the bottom to save everything and clear for the next session.</li>
         </ul>
       </InfoBox>
 
@@ -1298,6 +1356,29 @@ function Prompts({ onPrev }) {
           ))}
         </div>
       )}
+
+      {/* Save Task — saves all session data to DB and clears fields */}
+      <div className="rounded-lg border border-green-800 bg-green-950/20 p-4 space-y-3">
+        <div>
+          <h3 className="font-medium text-green-300">Save Task</h3>
+          <p className="text-xs text-green-400/80 mt-0.5">
+            Saves issue URL, base SHA, setup commit SHA, HFI UUID, prompts, and interaction results
+            to the database linked to your account. All fields are cleared after saving.
+          </p>
+        </div>
+        {saveMsg && (
+          <p className={`text-sm font-medium ${saveMsg.startsWith('Error') ? 'text-red-400' : 'text-green-400'}`}>
+            {saveMsg}
+          </p>
+        )}
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="px-6 py-2 bg-green-700 hover:bg-green-600 disabled:opacity-50 rounded text-sm font-semibold transition-colors"
+        >
+          {saving ? 'Saving…' : 'Save Task'}
+        </button>
+      </div>
 
       <StepNav onPrev={onPrev} />
     </div>

@@ -9,6 +9,7 @@ const promptsRouter  = require('./routes/prompts');
 const setupRouter    = require('./routes/setup');
 const settingsRouter = require('./routes/settings');
 const authRouter     = require('./routes/auth');
+const tasksRouter    = require('./routes/tasks');
 
 const app = express();
 const PORT = process.env.PORT || 4500;
@@ -24,6 +25,7 @@ app.use('/api/standards', standardsRouter);
 app.use('/api/prompts',   promptsRouter);
 app.use('/api/setup',     setupRouter);
 app.use('/api/settings',  settingsRouter);
+app.use('/api/tasks',     tasksRouter);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 

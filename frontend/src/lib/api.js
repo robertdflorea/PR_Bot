@@ -136,4 +136,12 @@ export const api = {
 
   resetWorkflowGuide: () =>
     apiFetch('/api/settings/workflow-guide/reset', { method: 'POST' }),
+
+  /* ─── Tasks ─── */
+  saveTask: (data) =>
+    apiFetch('/api/tasks', { method: 'POST', body: JSON.stringify(data) }),
+
+  getTasks: () => apiFetch('/api/tasks'),
+
+  deleteTask: (id) => apiFetch(`/api/tasks/${id}`, { method: 'DELETE' }),
 };

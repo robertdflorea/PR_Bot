@@ -1,6 +1,8 @@
 const express = require('express');
 const router  = express.Router();
-const Settings = require('../models/Settings');
+const Settings     = require('../models/Settings');
+const UserSettings = require('../models/UserSettings');
+const { authMiddleware } = require('../middleware/auth');
 
 /* ─── Dockerfile prompt ─── */
 const DOCKERFILE_KEY = 'dockerfile_prompt';
@@ -222,7 +224,7 @@ OUTPUT_STYLE_PREFERENCE:
 - Prefer short declarative statements.
 - Prefer structured sections over narrative text.`;
 
-/* ─── Generic helpers ─── */
+/* ─── Global helpers (admin / system defaults) ─── */
 async function getSetting(key, defaultValue) {
   let doc = await Settings.findOne({ key });
   if (!doc) doc = await Settings.create({ key, value: defaultValue });
@@ -233,76 +235,65 @@ async function setSetting(key, value) {
   return Settings.findOneAndUpdate({ key }, { value }, { upsert: true, new: true });
 }
 
-/* ─── Routes: Dockerfile prompt ─── */
-router.get('/dockerfile-prompt', async (req, res) => {
-  try {
-    res.json({ prompt: await getSetting(DOCKERFILE_KEY, DEFAULT_DOCKERFILE_PROMPT) });
-  } catch (err) { res.status(500).json({ error: err.message }); }
-});
+/* ─── Per-user helpers ─── */
+async function getUserSetting(userId, key, defaultValue) {
+  const userDoc = await UserSettings.findOne({ userId, key });
+  if (userDoc) return userDoc.value;
+  return getSetting(key, defaultValue);   // fall back to admin / system default
+}
 
-router.put('/dockerfile-prompt', async (req, res) => {
-  const { prompt } = req.body;
-  if (typeof prompt !== 'string' || !prompt.trim())
-    return res.status(400).json({ error: 'prompt must be a non-empty string' });
-  try {
-    const doc = await setSetting(DOCKERFILE_KEY, prompt.trim());
-    res.json({ prompt: doc.value });
-  } catch (err) { res.status(500).json({ error: err.message }); }
-});
+async function setUserSetting(userId, key, value) {
+  return UserSettings.findOneAndUpdate(
+    { userId, key },
+    { value },
+    { upsert: true, new: true }
+  );
+}
 
-router.post('/dockerfile-prompt/reset', async (req, res) => {
-  try {
-    const doc = await setSetting(DOCKERFILE_KEY, DEFAULT_DOCKERFILE_PROMPT);
-    res.json({ prompt: doc.value });
-  } catch (err) { res.status(500).json({ error: err.message }); }
-});
+/* ─── Factory: build GET / PUT / POST-reset for one setting ─── */
+function makeSettingRoutes(router, path, key, defaultValue, responseKey) {
+  // GET — return user's value (or admin default)
+  router.get(`/${path}`, authMiddleware, async (req, res) => {
+    try {
+      const value = await getUserSetting(req.user._id, key, defaultValue);
+      res.json({ [responseKey]: value });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+  });
 
-/* ─── Routes: First prompt generator template ─── */
-router.get('/first-prompt-generator', async (req, res) => {
-  try {
-    res.json({ template: await getSetting(FIRST_PROMPT_KEY, DEFAULT_FIRST_PROMPT_TEMPLATE) });
-  } catch (err) { res.status(500).json({ error: err.message }); }
-});
+  // PUT — admin updates system default; user updates their own copy
+  router.put(`/${path}`, authMiddleware, async (req, res) => {
+    const value = req.body[responseKey];
+    if (typeof value !== 'string' || !value.trim())
+      return res.status(400).json({ error: `${responseKey} must be a non-empty string` });
+    try {
+      if (req.user.role === 'admin') {
+        const doc = await setSetting(key, value.trim());
+        res.json({ [responseKey]: doc.value });
+      } else {
+        const doc = await setUserSetting(req.user._id, key, value.trim());
+        res.json({ [responseKey]: doc.value });
+      }
+    } catch (err) { res.status(500).json({ error: err.message }); }
+  });
 
-router.put('/first-prompt-generator', async (req, res) => {
-  const { template } = req.body;
-  if (typeof template !== 'string' || !template.trim())
-    return res.status(400).json({ error: 'template must be a non-empty string' });
-  try {
-    const doc = await setSetting(FIRST_PROMPT_KEY, template.trim());
-    res.json({ template: doc.value });
-  } catch (err) { res.status(500).json({ error: err.message }); }
-});
+  // POST reset — admin resets system default to hardcoded; user deletes their override
+  router.post(`/${path}/reset`, authMiddleware, async (req, res) => {
+    try {
+      if (req.user.role === 'admin') {
+        const doc = await setSetting(key, defaultValue);
+        res.json({ [responseKey]: doc.value });
+      } else {
+        await UserSettings.deleteOne({ userId: req.user._id, key });
+        const value = await getSetting(key, defaultValue);
+        res.json({ [responseKey]: value });
+      }
+    } catch (err) { res.status(500).json({ error: err.message }); }
+  });
+}
 
-router.post('/first-prompt-generator/reset', async (req, res) => {
-  try {
-    const doc = await setSetting(FIRST_PROMPT_KEY, DEFAULT_FIRST_PROMPT_TEMPLATE);
-    res.json({ template: doc.value });
-  } catch (err) { res.status(500).json({ error: err.message }); }
-});
-
-/* ─── Routes: Workflow guide ─── */
-router.get('/workflow-guide', async (req, res) => {
-  try {
-    res.json({ guide: await getSetting(GUIDE_KEY, DEFAULT_WORKFLOW_GUIDE) });
-  } catch (err) { res.status(500).json({ error: err.message }); }
-});
-
-router.put('/workflow-guide', async (req, res) => {
-  const { guide } = req.body;
-  if (typeof guide !== 'string' || !guide.trim())
-    return res.status(400).json({ error: 'guide must be a non-empty string' });
-  try {
-    const doc = await setSetting(GUIDE_KEY, guide.trim());
-    res.json({ guide: doc.value });
-  } catch (err) { res.status(500).json({ error: err.message }); }
-});
-
-router.post('/workflow-guide/reset', async (req, res) => {
-  try {
-    const doc = await setSetting(GUIDE_KEY, DEFAULT_WORKFLOW_GUIDE);
-    res.json({ guide: doc.value });
-  } catch (err) { res.status(500).json({ error: err.message }); }
-});
+/* ─── Register all settings ─── */
+makeSettingRoutes(router, 'dockerfile-prompt',     DOCKERFILE_KEY,   DEFAULT_DOCKERFILE_PROMPT,    'prompt');
+makeSettingRoutes(router, 'first-prompt-generator', FIRST_PROMPT_KEY, DEFAULT_FIRST_PROMPT_TEMPLATE, 'template');
+makeSettingRoutes(router, 'workflow-guide',          GUIDE_KEY,        DEFAULT_WORKFLOW_GUIDE,        'guide');
 
 module.exports = router;
